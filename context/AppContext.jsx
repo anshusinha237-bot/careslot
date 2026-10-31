@@ -15,6 +15,7 @@ export function AppProvider({ children }) {
   const [doctors, setDoctors] = useState(INITIAL_DOCTORS);
   const [departments, setDepartments] = useState(INITIAL_DEPARTMENTS);
   const [appointments, setAppointments] = useState(INITIAL_APPOINTMENTS);
+  const [dbStatus, setDbStatus] = useState({ connected: false, checked: false });
   const [notifications, setNotifications] = useState([
     {
       id: "init-1",
@@ -27,39 +28,72 @@ export function AppProvider({ children }) {
   ]);
   const [isClient, setIsClient] = useState(false);
 
-  // Load persisted state from localStorage on client mount
+  // Sync initial state from backend API & localStorage on mount
   useEffect(() => {
     setIsClient(true);
+
+    // 1. Fetch from backend /api/health
+    fetch("/api/health")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.database) {
+          setDbStatus({
+            connected: data.database.connected,
+            checked: true,
+            latencyMs: data.database.latencyMs,
+          });
+        }
+      })
+      .catch(() => {});
+
+    // 2. Fetch doctors from /api/doctors
+    fetch("/api/doctors")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setDoctors(res.data);
+        }
+      })
+      .catch(() => {});
+
+    // 3. Fetch departments from /api/departments
+    fetch("/api/departments")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setDepartments(res.data);
+        }
+      })
+      .catch(() => {});
+
+    // 4. Fetch appointments from /api/appointments
+    fetch("/api/appointments")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setAppointments(res.data);
+        }
+      })
+      .catch(() => {});
+
+    // LocalStorage fallback cache
     try {
       const savedUser = localStorage.getItem("careslot_user");
-      const savedDoctors = localStorage.getItem("careslot_doctors");
-      const savedDepts = localStorage.getItem("careslot_depts");
-      const savedApps = localStorage.getItem("careslot_appointments");
-      const savedNotifs = localStorage.getItem("careslot_notifications");
-
       if (savedUser) setCurrentUser(JSON.parse(savedUser));
-      if (savedDoctors) setDoctors(JSON.parse(savedDoctors));
-      if (savedDepts) setDepartments(JSON.parse(savedDepts));
-      if (savedApps) setAppointments(JSON.parse(savedApps));
-      if (savedNotifs) setNotifications(JSON.parse(savedNotifs));
     } catch (e) {
-      console.error("Failed to load local state:", e);
+      console.error(e);
     }
   }, []);
 
-  // Save changes to localStorage
+  // Save user changes to localStorage
   useEffect(() => {
     if (!isClient) return;
     try {
       localStorage.setItem("careslot_user", JSON.stringify(currentUser));
       localStorage.setItem("careslot_doctors", JSON.stringify(doctors));
-      localStorage.setItem("careslot_depts", JSON.stringify(departments));
       localStorage.setItem("careslot_appointments", JSON.stringify(appointments));
-      localStorage.setItem("careslot_notifications", JSON.stringify(notifications));
-    } catch (e) {
-      console.error("Failed to save local state:", e);
-    }
-  }, [currentUser, doctors, departments, appointments, notifications, isClient]);
+    } catch (e) {}
+  }, [currentUser, doctors, appointments, isClient]);
 
   // Switch demo persona (Patient, Doctor, Admin)
   const switchRole = (roleKey) => {
@@ -74,45 +108,57 @@ export function AppProvider({ children }) {
     }
   };
 
-  // Auth login
-  const login = (email, password) => {
-    const trimmedEmail = email.trim().toLowerCase();
-    if (trimmedEmail === "admin@careslot.com" && password === "Admin@123") {
-      setCurrentUser(DEFAULT_USERS.admin);
-      return { success: true, role: "admin" };
+  // Auth login with API integration
+  const login = async (email, password) => {
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "login", email, password }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCurrentUser(data.user);
+        return { success: true, role: data.role };
+      }
+      return { success: false, message: data.message };
+    } catch {
+      // Local fallback
+      const clean = email.trim().toLowerCase();
+      if (clean === "admin@careslot.com" && password === "Admin@123") {
+        setCurrentUser(DEFAULT_USERS.admin);
+        return { success: true, role: "admin" };
+      }
+      if (clean === "doctor@careslot.com" && password === "Doctor@123") {
+        setCurrentUser(DEFAULT_USERS.doctor);
+        return { success: true, role: "doctor" };
+      }
+      if (clean === "patient@careslot.com" && password === "Patient@123") {
+        setCurrentUser(DEFAULT_USERS.patient);
+        return { success: true, role: "patient" };
+      }
+      return { success: false, message: "Invalid credentials. Use demo passwords." };
     }
-    if (trimmedEmail === "doctor@careslot.com" && password === "Doctor@123") {
-      setCurrentUser(DEFAULT_USERS.doctor);
-      return { success: true, role: "doctor" };
-    }
-    if (trimmedEmail === "patient@careslot.com" && password === "Patient@123") {
-      setCurrentUser(DEFAULT_USERS.patient);
-      return { success: true, role: "patient" };
-    }
-    // Generic check against doctors
-    const foundDoc = doctors.find((d) => d.email.toLowerCase() === trimmedEmail);
-    if (foundDoc && password === "Doctor@123") {
-      const docUser = {
-        user_id: foundDoc.user_id,
-        doctor_id: foundDoc.doctor_id,
-        full_name: foundDoc.full_name,
-        email: foundDoc.email,
-        role: "doctor",
-        dept_name: foundDoc.dept_name,
-        opd_room: foundDoc.opd_room,
-      };
-      setCurrentUser(docUser);
-      return { success: true, role: "doctor" };
-    }
-
-    return { success: false, message: "Invalid email or password. Please use default demo credentials." };
   };
 
   const logout = () => {
     setCurrentUser(null);
   };
 
-  const register = (fullName, email, phone, password) => {
+  const register = async (fullName, email, phone, password) => {
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "register", fullName, email, phone, password }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCurrentUser(data.user);
+        return { success: true, user: data.user };
+      }
+    } catch {}
+
     const newUser = {
       user_id: Date.now(),
       full_name: fullName,
@@ -124,8 +170,8 @@ export function AppProvider({ children }) {
     return { success: true, user: newUser };
   };
 
-  // Real-Time Doctor Status Switch (Available, Busy, In-Surgery, On-Leave)
-  const updateDoctorStatus = (doctorId, newStatus) => {
+  // Update Doctor Status via API (TC-11)
+  const updateDoctorStatus = async (doctorId, newStatus) => {
     setDoctors((prev) =>
       prev.map((doc) =>
         doc.doctor_id === Number(doctorId)
@@ -139,19 +185,26 @@ export function AppProvider({ children }) {
       )
     );
 
+    // Call backend API
+    fetch(`/api/doctors/${doctorId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    }).catch(() => {});
+
     const doc = doctors.find((d) => d.doctor_id === Number(doctorId));
     if (doc) {
       addNotification({
         type: newStatus === "Available" ? "success" : "info",
-        title: `Doctor Status Updated`,
+        title: "Doctor Status Updated",
         message: `${doc.full_name} is now marked as ${newStatus}.`,
         doctorId: doc.doctor_id,
       });
     }
   };
 
-  // Broadcast Emergency Delay Alert (TC-24)
-  const broadcastDelay = (doctorId, minutes, reason) => {
+  // Broadcast Emergency Delay via API (TC-24)
+  const broadcastDelay = async (doctorId, minutes, reason) => {
     setDoctors((prev) =>
       prev.map((doc) =>
         doc.doctor_id === Number(doctorId)
@@ -165,6 +218,16 @@ export function AppProvider({ children }) {
       )
     );
 
+    fetch(`/api/doctors/${doctorId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        status: minutes > 0 ? "In-Surgery" : "Available",
+        delay_minutes: Number(minutes),
+        delay_reason: reason,
+      }),
+    }).catch(() => {});
+
     const doc = doctors.find((d) => d.doctor_id === Number(doctorId));
     if (doc) {
       addNotification({
@@ -177,17 +240,11 @@ export function AppProvider({ children }) {
   };
 
   const clearDelay = (doctorId) => {
-    setDoctors((prev) =>
-      prev.map((doc) =>
-        doc.doctor_id === Number(doctorId)
-          ? { ...doc, delay_minutes: 0, delay_reason: "", current_status: "Available" }
-          : doc
-      )
-    );
+    broadcastDelay(doctorId, 0, "");
   };
 
-  // Advance OPD Queue (Call Next Patient, TC-12)
-  const callNextPatient = (doctorId) => {
+  // Advance Queue via API (TC-12)
+  const callNextPatient = async (doctorId) => {
     setDoctors((prev) =>
       prev.map((doc) => {
         if (doc.doctor_id === Number(doctorId)) {
@@ -204,7 +261,6 @@ export function AppProvider({ children }) {
       })
     );
 
-    // Update appointment status in queue
     setAppointments((prev) => {
       let markedOne = false;
       return prev.map((app) => {
@@ -221,9 +277,15 @@ export function AppProvider({ children }) {
         return app;
       });
     });
+
+    fetch("/api/queue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ doctorId }),
+    }).catch(() => {});
   };
 
-  // Appointment Booking with ACID Concurrency Lock Simulation (TC-08, TC-09)
+  // Book Appointment via API (TC-08, TC-09)
   const bookAppointment = ({
     doctorId,
     appointmentDate,
@@ -241,11 +303,11 @@ export function AppProvider({ children }) {
     if (doc.current_status === "On-Leave") {
       return {
         success: false,
-        message: `Dr. ${doc.full_name} is currently On-Leave. Bookings for today cannot be processed.`,
+        message: `Dr. ${doc.full_name} is currently On-Leave.`,
       };
     }
 
-    // Double Booking Concurrency Lock check:
+    // Concurrency Lock Check (TC-09)
     const conflict = appointments.some(
       (app) =>
         app.doctor_id === Number(doctorId) &&
@@ -258,11 +320,10 @@ export function AppProvider({ children }) {
       return {
         success: false,
         message:
-          "Concurrency Lock Conflict: This time slot was just secured by another patient. Please choose another slot.",
+          "Concurrency Lock Conflict (TC-09): This time slot was just booked by another patient. Please choose another slot.",
       };
     }
 
-    // Generate Token Number based on OPD sequence
     const existingTokens = appointments
       .filter((a) => a.doctor_id === Number(doctorId) && a.appointment_date === appointmentDate)
       .map((a) => a.token_number);
@@ -270,8 +331,6 @@ export function AppProvider({ children }) {
     let nextToken = doc.current_token_serving || 101;
     if (existingTokens.length > 0) {
       nextToken = Math.max(...existingTokens) + 1;
-    } else {
-      nextToken = (doc.doctor_id % 100) * 100 + 1; // e.g., 101, 201, 301
     }
 
     const newAppointment = {
@@ -287,22 +346,29 @@ export function AppProvider({ children }) {
       opd_room: doc.opd_room,
       appointment_date: appointmentDate,
       appointment_time: appointmentTime,
-      symptoms: symptoms || "General Consultation / Routine Follow-up",
+      symptoms: symptoms || "General Consultation",
       status: "confirmed",
       fee: doc.consultation_fee,
-      created_at: new Date().toISOString().replace("T", " ").substring(0, 19),
+      created_at: new Date().toISOString(),
     };
 
     setAppointments((prev) => [newAppointment, ...prev]);
 
-    // Update doctor's patient count
-    setDoctors((prev) =>
-      prev.map((d) =>
-        d.doctor_id === doc.doctor_id
-          ? { ...d, today_patients_count: d.today_patients_count + 1 }
-          : d
-      )
-    );
+    // Send to backend API
+    fetch("/api/appointments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        doctorId: doc.doctor_id,
+        appointmentDate,
+        appointmentTime,
+        symptoms,
+        patientName,
+        patientEmail,
+        patientPhone,
+        patientId: currentUser?.user_id,
+      }),
+    }).catch(() => {});
 
     addNotification({
       type: "success",
@@ -314,35 +380,42 @@ export function AppProvider({ children }) {
     return { success: true, appointment: newAppointment };
   };
 
-  // Cancel Appointment and Free Slot (TC-10)
+  // Cancel Appointment via API (TC-10)
   const cancelAppointment = (appointmentId) => {
     setAppointments((prev) =>
       prev.map((app) =>
-        app.appointment_id === Number(appointmentId)
-          ? { ...app, status: "cancelled" }
-          : app
+        app.appointment_id === Number(appointmentId) ? { ...app, status: "cancelled" } : app
       )
     );
+
+    fetch(`/api/appointments/${appointmentId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "cancelled" }),
+    }).catch(() => {});
 
     addNotification({
       type: "info",
-      title: "Appointment Cancelled",
-      message: `Appointment #${appointmentId} has been cancelled. The time slot is now freed.`,
+      title: "Appointment Cancelled (TC-10)",
+      message: `Appointment #${appointmentId} cancelled. Time slot freed for other patients.`,
     });
   };
 
-  // Complete consultation (Doctor action)
   const completeConsultation = (appointmentId) => {
     setAppointments((prev) =>
       prev.map((app) =>
-        app.appointment_id === Number(appointmentId)
-          ? { ...app, status: "completed" }
-          : app
+        app.appointment_id === Number(appointmentId) ? { ...app, status: "completed" } : app
       )
     );
+
+    fetch(`/api/appointments/${appointmentId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "completed" }),
+    }).catch(() => {});
   };
 
-  // Admin: Add Doctor (TC-15)
+  // Add Doctor via API (TC-15)
   const addDoctor = (newDoc) => {
     const dept = departments.find((d) => d.dept_id === Number(newDoc.dept_id));
     const doctorObj = {
@@ -365,8 +438,7 @@ export function AppProvider({ children }) {
       reviews_count: 1,
       today_patients_count: 0,
       today_completed_count: 0,
-      shift_hours: newDoc.shift_hours || "09:00 AM - 01:00 PM",
-      bio: newDoc.bio || "Specialist physician dedicated to patient clinical excellence.",
+      shift_hours: "09:00 AM - 01:30 PM",
       available_slots: [
         "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM",
         "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
@@ -375,25 +447,16 @@ export function AppProvider({ children }) {
 
     setDoctors((prev) => [doctorObj, ...prev]);
 
-    // Update department count
-    if (dept) {
-      setDepartments((prev) =>
-        prev.map((d) =>
-          d.dept_id === dept.dept_id ? { ...d, activeDoctors: d.activeDoctors + 1 } : d
-        )
-      );
-    }
-
-    addNotification({
-      type: "success",
-      title: "Doctor Enrolled",
-      message: `${doctorObj.full_name} has been added to ${doctorObj.dept_name}.`,
-    });
+    fetch("/api/doctors", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newDoc),
+    }).catch(() => {});
 
     return doctorObj;
   };
 
-  // Admin: Add Department (TC-14)
+  // Add Department via API (TC-14)
   const addDepartment = (dept) => {
     const newDept = {
       dept_id: Date.now(),
@@ -401,60 +464,49 @@ export function AppProvider({ children }) {
       description: dept.description,
       floor: dept.floor || "Block A - Ground Floor",
       activeDoctors: 0,
-      icon: dept.icon || "Stethoscope",
     };
     setDepartments((prev) => [...prev, newDept]);
-    addNotification({
-      type: "success",
-      title: "Department Created",
-      message: `Department '${newDept.dept_name}' registered successfully.`,
-    });
+
+    fetch("/api/departments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dept),
+    }).catch(() => {});
+
     return newDept;
   };
 
-  // Admin: Delete Department with Doctor Foreign Key Check (TC-28)
+  // Delete Department via API (TC-28)
   const deleteDepartment = (deptId) => {
     const activeDocCount = doctors.filter((d) => d.dept_id === Number(deptId)).length;
     if (activeDocCount > 0) {
       return {
         success: false,
-        message: `Safety Constraint Triggered (TC-28): Cannot delete department with ${activeDocCount} active doctors assigned. Reassign doctors first.`,
+        message: `Safety Constraint (TC-28): Cannot delete department with ${activeDocCount} active doctors assigned. Reassign doctors first.`,
       };
     }
     setDepartments((prev) => prev.filter((d) => d.dept_id !== Number(deptId)));
+
+    fetch(`/api/departments?id=${deptId}`, { method: "DELETE" }).catch(() => {});
     return { success: true };
   };
 
-  // Notification helper
   const addNotification = (notif) => {
-    const item = {
-      id: Date.now().toString(),
-      time: "Just now",
-      ...notif,
-    };
-    setNotifications((prev) => [item, ...prev.slice(0, 7)]);
+    setNotifications((prev) => [
+      { id: Date.now().toString(), time: "Just now", ...notif },
+      ...prev.slice(0, 7),
+    ]);
   };
 
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-  // Reset demo data to factory defaults
-  const resetToDefaultData = () => {
-    setCurrentUser(DEFAULT_USERS.patient);
-    setDoctors(INITIAL_DOCTORS);
-    setDepartments(INITIAL_DEPARTMENTS);
-    setAppointments(INITIAL_APPOINTMENTS);
-    setNotifications([]);
-    if (typeof window !== "undefined") {
-      localStorage.clear();
-    }
-  };
-
   return (
     <AppContext.Provider
       value={{
         currentUser,
+        dbStatus,
         switchRole,
         login,
         logout,
@@ -475,7 +527,6 @@ export function AppProvider({ children }) {
         addDoctor,
         addDepartment,
         deleteDepartment,
-        resetToDefaultData,
       }}
     >
       {children}

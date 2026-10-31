@@ -1,5 +1,5 @@
-// CareSlot Prisma Schema
-// Connects to Supabase PostgreSQL database
+// CareSlot Complete Database Schema
+// Connected to Supabase PostgreSQL Database
 
 generator client {
   provider = "prisma-client-js"
@@ -33,11 +33,11 @@ enum AppointmentStatus {
 }
 
 model Department {
-  dept_id      Int      @id @default(autoincrement())
-  dept_name    String   @db.VarChar(100)
-  description  String?  @db.Text
-  floor        String?  @db.VarChar(100)
-  doctors      Doctor[]
+  dept_id     Int      @id @default(autoincrement())
+  dept_name   String   @unique @db.VarChar(100)
+  description String?  @db.Text
+  floor       String?  @db.VarChar(100)
+  doctors     Doctor[]
 
   @@map("departments")
 }
@@ -70,6 +70,9 @@ model Doctor {
   delay_minutes         Int           @default(0)
   delay_reason          String?       @db.Text
   shift_hours           String?       @db.VarChar(100) @default("09:00 AM - 01:30 PM")
+  rating                Float         @default(4.9)
+  reviews_count         Int           @default(120)
+  bio                   String?       @db.Text
   user                  User          @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   department            Department    @relation(fields: [dept_id], references: [dept_id], onDelete: Cascade)
   appointments          Appointment[]
@@ -86,9 +89,23 @@ model Appointment {
   token_number     Int
   symptoms         String?           @db.Text
   status           AppointmentStatus @default(confirmed)
+  fee              Decimal           @default(500.00) @db.Decimal(10, 2)
   created_at       DateTime          @default(now())
   patient          User              @relation(fields: [patient_id], references: [user_id], onDelete: Cascade)
   doctor           Doctor            @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade)
 
+  @@index([doctor_id, appointment_date, appointment_time])
   @@map("appointments")
+}
+
+model EmergencyAlert {
+  alert_id      Int      @id @default(autoincrement())
+  doctor_id     Int
+  doctor_name   String   @db.VarChar(100)
+  delay_minutes Int
+  reason        String   @db.Text
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+
+  @@map("emergency_alerts")
 }
