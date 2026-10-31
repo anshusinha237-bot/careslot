@@ -14,9 +14,11 @@ export async function GET() {
     database: {
       type: "Supabase PostgreSQL (Prisma ORM)",
       connected: dbStatus.connected,
-      latencyMs: latency,
-      error: dbStatus.error || null,
-      poolerMode: "Transaction Pooler (PgBouncer IPv4)",
+      isPlaceholder: dbStatus.isPlaceholder || false,
+      message: dbStatus.connected
+        ? "Live connection established to Supabase PostgreSQL"
+        : dbStatus.error || "Database server unreachable or credentials pending",
+      poolerMode: "Transaction Pooler (PgBouncer IPv4: 6543)",
     },
     systemMetrics: {
       avgResponseLatency: `${Math.min(latency + 15, 142)}ms`,
