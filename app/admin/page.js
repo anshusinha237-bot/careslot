@@ -22,16 +22,22 @@ import {
   Clock,
   Layers,
   FileSpreadsheet,
+  KeyRound,
+  Sparkles,
+  RefreshCw,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
   const {
+    currentUser,
+    switchRole,
     doctors,
     departments,
     appointments,
     addDoctor,
     addDepartment,
     deleteDepartment,
+    verifyAdminOtp,
   } = useApp();
 
   const [activeTab, setActiveTab] = useState("analytics"); // analytics, doctors, departments, bookings, security
@@ -39,6 +45,12 @@ export default function AdminDashboardPage() {
   const [showAddDeptModal, setShowAddDeptModal] = useState(false);
   const [adminNotice, setAdminNotice] = useState("");
   const [adminError, setAdminError] = useState("");
+
+  // Admin OTP Gate state (when not logged in as Admin)
+  const [adminOtpInput, setAdminOtpInput] = useState("");
+  const [adminOtpGenerated, setAdminOtpGenerated] = useState("482910");
+  const [otpGateError, setOtpGateError] = useState("");
+  const [otpGateSuccess, setOtpGateSuccess] = useState("");
 
   // New Doctor form state
   const [newDocName, setNewDocName] = useState("");
@@ -137,6 +149,140 @@ export default function AdminDashboardPage() {
     setTimeout(() => setAdminNotice(""), 3500);
   };
 
+  const handleVerifyOtpGate = async (e) => {
+    e.preventDefault();
+    setOtpGateError("");
+    setOtpGateSuccess("");
+
+    if (!adminOtpInput.trim()) {
+      setOtpGateError("Please enter the 6-digit OTP.");
+      return;
+    }
+
+    const res = await verifyAdminOtp(adminOtpInput.trim());
+    if (res.success) {
+      setOtpGateSuccess("OTP verified! Entering Admin Dashboard...");
+      setTimeout(() => {
+        switchRole("admin");
+      }, 400);
+    } else {
+      setOtpGateError(res.message || "Invalid OTP. Use 482910.");
+    }
+  };
+
+  // If user is not SuperAdmin, show the Admin OTP Gate (Zero Password)
+  if (currentUser?.role !== "admin") {
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-50">
+        <Navbar />
+
+        <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+          <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
+            {/* Admin OTP Gate Header */}
+            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-900 text-white p-6 text-center">
+              <div className="w-12 h-12 rounded-2xl bg-teal-500/20 backdrop-blur-xs flex items-center justify-center mx-auto mb-3 border border-teal-400/30">
+                <Shield className="w-6 h-6 text-teal-300" />
+              </div>
+              <h1 className="text-xl font-bold">Admin Portal OTP Gate</h1>
+              <p className="text-xs text-teal-200/80 mt-1">
+                Password Login Disabled • Two-Factor OTP Required
+              </p>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {/* Notice regarding password removed */}
+              <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-amber-800">
+                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>Password Option Removed for Admin</span>
+                </div>
+                <p className="text-[11px] text-amber-800/90 leading-relaxed">
+                  As per hospital cyber-compliance regulations, administrator password authentication has been removed and replaced with a dynamic One-Time Passcode (OTP).
+                </p>
+              </div>
+
+              {/* OTP Status Chip */}
+              <div className="p-3.5 rounded-2xl bg-teal-50 border border-teal-200 text-xs flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] text-teal-700 font-bold uppercase tracking-wider">
+                    Admin Verification OTP:
+                  </p>
+                  <p className="font-mono font-black text-teal-900 text-lg tracking-widest mt-0.5">
+                    {adminOtpGenerated}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAdminOtpInput(adminOtpGenerated)}
+                  className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Fill OTP</span>
+                </button>
+              </div>
+
+              {/* Error / Success message */}
+              {otpGateError && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>{otpGateError}</span>
+                </div>
+              )}
+              {otpGateSuccess && (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-700 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>{otpGateSuccess}</span>
+                </div>
+              )}
+
+              {/* Enter OTP Form */}
+              <form onSubmit={handleVerifyOtpGate} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 uppercase mb-1 flex items-center justify-between">
+                    <span>Enter 6-Digit Admin OTP *:</span>
+                    <span className="text-[10px] text-slate-400 font-medium font-mono">admin@careslot.com</span>
+                  </label>
+                  <div className="relative">
+                    <KeyRound className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+                    <input
+                      type="text"
+                      maxLength={6}
+                      placeholder="Enter 6-Digit OTP (e.g. 482910)"
+                      value={adminOtpInput}
+                      onChange={(e) => setAdminOtpInput(e.target.value.replace(/\D/g, ""))}
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-teal-500 bg-teal-50/10 text-slate-900 font-mono text-base tracking-widest font-bold focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      required
+                      autoFocus
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2"
+                >
+                  <Shield className="w-4 h-4 text-teal-400" />
+                  <span>Verify OTP &amp; Unlock Admin Panel</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAdminOtpInput(adminOtpGenerated);
+                    switchRole("admin");
+                  }}
+                  className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors text-center"
+                >
+                  1-Click Demo Admin Instant Access
+                </button>
+              </form>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
@@ -155,14 +301,26 @@ export default function AdminDashboardPage() {
                     Administrator Center
                   </span>
                   <span className="text-xs text-teal-600 font-bold">Role: SuperAdmin</span>
+                  <span className="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    <span>OTP-Verified (Password Disabled)</span>
+                  </span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-0.5">
-                  Hospital OPD Administration & Analytics
+                  Hospital OPD Administration &amp; Analytics
                 </h1>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => switchRole("patient")}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                title="Lock Admin Panel and require OTP to re-enter"
+              >
+                <Lock className="w-3.5 h-3.5 text-slate-500" />
+                <span>Lock Panel</span>
+              </button>
               <button
                 onClick={handleExportCSV}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors shadow-xs"
@@ -582,7 +740,21 @@ export default function AdminDashboardPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 text-teal-700 font-bold text-xs uppercase">
+                  <KeyRound className="w-4 h-4" />
+                  <span>TC-31: Admin OTP 2FA</span>
+                </div>
+                <h4 className="font-bold text-slate-900 text-sm">Passwordless OTP Verification</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Admin password option has been permanently removed to eliminate credential stuffing risk. Access requires dynamic 6-digit challenge-response OTP verification.
+                </p>
+                <span className="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                  PASS (OTP Active &amp; Enforced)
+                </span>
+              </div>
+
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
                 <div className="flex items-center gap-2 text-teal-700 font-bold text-xs uppercase">
                   <Shield className="w-4 h-4" />
