@@ -25,26 +25,35 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
 
-  // Core navigation links (Find Doctors, Live Queue, Patient Portal)
-  // Plus role-specific console if Doctor or Admin is logged in
+  // Role-based navigation links
+  // Doctor Role: Strictly streamlined to clinical essentials (Doctor Console ONLY)
+  // Patient Role: Patient-facing links (Find Doctors, Live Queue, Patient Portal)
+  // Admin Role: Full platform access
   const navLinks = useMemo(() => {
     const role = currentUser?.role || "patient";
 
-    const baseLinks = [
+    if (role === "doctor") {
+      // Doctor View: Removed patient-facing links (Find Doctors, Live Queue)
+      return [{ name: "Doctor Console", href: "/doctor", icon: Activity }];
+    }
+
+    if (role === "admin") {
+      return [
+        { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
+        { name: "Live Queue", href: "/queue", icon: Clock },
+        { name: "Patient Portal", href: "/patient", icon: Calendar },
+        { name: "Doctor Console", href: "/doctor", icon: Activity },
+        { name: "Admin Panel", href: "/admin", icon: Shield },
+        { name: "QA Tests", href: "/tests", icon: FileCheck2 },
+      ];
+    }
+
+    // Default: Patient view (strictly patient-facing links)
+    return [
       { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
       { name: "Live Queue", href: "/queue", icon: Clock },
       { name: "Patient Portal", href: "/patient", icon: Calendar },
     ];
-
-    if (role === "doctor") {
-      baseLinks.push({ name: "Doctor Console", href: "/doctor", icon: Activity });
-    } else if (role === "admin") {
-      baseLinks.push({ name: "Doctor Console", href: "/doctor", icon: Activity });
-      baseLinks.push({ name: "Admin Panel", href: "/admin", icon: Shield });
-      baseLinks.push({ name: "QA Tests", href: "/tests", icon: FileCheck2 });
-    }
-
-    return baseLinks;
   }, [currentUser?.role]);
 
   const handleRoleSwitch = (role) => {
