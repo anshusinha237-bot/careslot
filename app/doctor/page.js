@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useApp } from "../../context/AppContext";
 import Navbar from "../../components/Navbar";
 import {
@@ -23,6 +24,7 @@ import {
 export default function DoctorDashboardPage() {
   const {
     currentUser,
+    switchRole,
     doctors,
     appointments,
     updateDoctorStatus,
@@ -36,6 +38,42 @@ export default function DoctorDashboardPage() {
   const activeDoctor =
     doctors.find((d) => d.doctor_id === currentUser?.doctor_id || d.user_id === currentUser?.user_id) ||
     doctors[0]; // Dr. Priya Sharma
+
+  // TC-05: RBAC Protection - Only Doctor or Admin can access
+  if (currentUser?.role === "patient") {
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-50">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+          <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-xl p-8 text-center space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
+              <Shield className="w-7 h-7" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Doctor Access Restricted (TC-05)</h2>
+              <p className="text-xs text-slate-500 mt-1">
+                You are currently logged in as a <strong>Patient</strong> ({currentUser.full_name}). The Doctor OPD Console is restricted to clinical specialists.
+              </p>
+            </div>
+            <div className="pt-2 flex flex-col gap-2">
+              <Link
+                href="/patient"
+                className="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md transition-colors"
+              >
+                Return to Patient Portal
+              </Link>
+              <button
+                onClick={() => switchRole("doctor")}
+                className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+              >
+                Switch to Demo Doctor Account
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   const [delayInput, setDelayInput] = useState(activeDoctor.delay_minutes || 15);
   const [delayReason, setDelayReason] = useState(activeDoctor.delay_reason || "Emergency procedural case in OT");

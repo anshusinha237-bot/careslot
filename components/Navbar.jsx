@@ -26,14 +26,37 @@ export default function Navbar({ onOpenSymptomChecker }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
 
-  const navLinks = [
-    { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
-    { name: "Live Queue", href: "/queue", icon: Clock },
-    { name: "Patient Portal", href: "/patient", icon: Calendar },
-    { name: "Doctor Console", href: "/doctor", icon: Activity },
-    { name: "Admin Panel", href: "/admin", icon: Shield },
-    { name: "QA Tests", href: "/tests", icon: FileCheck2 },
-  ];
+  // Role-based navigation links (RBAC)
+  // When logged in as a patient (or visitor), strictly keep ONLY: Find Doctors, Live Queue, and Patient Portal
+  const navLinks = React.useMemo(() => {
+    const role = currentUser?.role || "patient";
+
+    if (role === "patient") {
+      return [
+        { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
+        { name: "Live Queue", href: "/queue", icon: Clock },
+        { name: "Patient Portal", href: "/patient", icon: Calendar },
+      ];
+    }
+
+    if (role === "doctor") {
+      return [
+        { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
+        { name: "Live Queue", href: "/queue", icon: Clock },
+        { name: "Doctor Console", href: "/doctor", icon: Activity },
+      ];
+    }
+
+    // Admin has full access to administrative console & tests
+    return [
+      { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
+      { name: "Live Queue", href: "/queue", icon: Clock },
+      { name: "Patient Portal", href: "/patient", icon: Calendar },
+      { name: "Doctor Console", href: "/doctor", icon: Activity },
+      { name: "Admin Panel", href: "/admin", icon: Shield },
+      { name: "QA Tests", href: "/tests", icon: FileCheck2 },
+    ];
+  }, [currentUser?.role]);
 
   const handleRoleSwitch = (role) => {
     switchRole(role);
@@ -82,7 +105,7 @@ export default function Navbar({ onOpenSymptomChecker }) {
             })}
 
             {/* AI Symptom Recommender Button */}
-            {onOpenSymptomChecker && (
+            {onOpenSymptomChecker && currentUser?.role !== "patient" && (
               <button
                 onClick={onOpenSymptomChecker}
                 className="flex items-center gap-1.5 px-3 py-1.5 ml-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-teal-500/10 text-indigo-700 border border-indigo-200/80 hover:border-indigo-300 hover:from-purple-500/15 hover:to-teal-500/15 transition-all shadow-2xs"
@@ -209,7 +232,7 @@ export default function Navbar({ onOpenSymptomChecker }) {
 
           {/* Mobile menu button */}
           <div className="flex items-center gap-2 lg:hidden">
-            {onOpenSymptomChecker && (
+            {onOpenSymptomChecker && currentUser?.role !== "patient" && (
               <button
                 onClick={onOpenSymptomChecker}
                 className="p-2 rounded-xl bg-indigo-50 text-indigo-700 text-xs font-bold border border-indigo-200"
