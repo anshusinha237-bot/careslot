@@ -1,0 +1,94 @@
+// CareSlot Prisma Schema
+// Connects to Supabase PostgreSQL database
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  admin
+  doctor
+  patient
+}
+
+enum DoctorStatus {
+  Available
+  Busy
+  InSurgery @map("In-Surgery")
+  OnLeave   @map("On-Leave")
+}
+
+enum AppointmentStatus {
+  pending
+  confirmed
+  in_progress @map("in-progress")
+  completed
+  cancelled
+}
+
+model Department {
+  dept_id      Int      @id @default(autoincrement())
+  dept_name    String   @db.VarChar(100)
+  description  String?  @db.Text
+  floor        String?  @db.VarChar(100)
+  doctors      Doctor[]
+
+  @@map("departments")
+}
+
+model User {
+  user_id       Int           @id @default(autoincrement())
+  full_name     String        @db.VarChar(100)
+  email         String        @unique @db.VarChar(100)
+  password_hash String        @db.VarChar(255)
+  phone         String?       @db.VarChar(20)
+  role          Role          @default(patient)
+  created_at    DateTime      @default(now())
+  doctors       Doctor[]
+  appointments  Appointment[]
+
+  @@map("users")
+}
+
+model Doctor {
+  doctor_id             Int           @id @default(autoincrement())
+  user_id               Int
+  dept_id               Int
+  qualification         String?       @db.VarChar(100)
+  experience            String?       @db.VarChar(50)
+  opd_room              String?       @db.VarChar(100)
+  consultation_fee      Decimal       @default(500.00) @db.Decimal(10, 2)
+  current_status        DoctorStatus  @default(Available)
+  current_token_serving Int           @default(101)
+  next_token            Int           @default(102)
+  delay_minutes         Int           @default(0)
+  delay_reason          String?       @db.Text
+  shift_hours           String?       @db.VarChar(100) @default("09:00 AM - 01:30 PM")
+  user                  User          @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  department            Department    @relation(fields: [dept_id], references: [dept_id], onDelete: Cascade)
+  appointments          Appointment[]
+
+  @@map("doctors")
+}
+
+model Appointment {
+  appointment_id   Int               @id @default(autoincrement())
+  patient_id       Int
+  doctor_id        Int
+  appointment_date DateTime          @db.Date
+  appointment_time String            @db.VarChar(20)
+  token_number     Int
+  symptoms         String?           @db.Text
+  status           AppointmentStatus @default(confirmed)
+  created_at       DateTime          @default(now())
+  patient          User              @relation(fields: [patient_id], references: [user_id], onDelete: Cascade)
+  doctor           Doctor            @relation(fields: [doctor_id], references: [doctor_id], onDelete: Cascade)
+
+  @@map("appointments")
+}
