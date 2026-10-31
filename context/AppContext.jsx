@@ -420,25 +420,102 @@ export function AppProvider({ children }) {
     return { success: true, appointment: newAppointment };
   };
 
-  // Cancel Appointment via API (TC-10)
-  const cancelAppointment = (appointmentId) => {
+  // Cancel Appointment via API with Refund Policy (TC-10)
+  // Policy: < 4h = No refund (100% cut), 4-8h = 17% cut (83% refund), > 8h = 100% full refund
+  const cancelAppointment = (appointmentId, refundDetails = {}) => {
+    const {
+      refundAmount = 0,
+      cancellationFee = 0,
+      cancellationTier = "standard",
+      refundStatus = "processed",
+      reason = "Patient requested cancellation",
+    } = refundDetails;
+
+    const cancelledAt = new Date().toISOString();
+
     setAppointments((prev) =>
       prev.map((app) =>
-        app.appointment_id === Number(appointmentId) ? { ...app, status: "cancelled" } : app
+        app.appointment_id === Number(appointmentId)
+          ? {
+              ...app,
+              status: "cancelled",
+              refund_amount: refundAmount,
+              cancellation_fee: cancellationFee,
+              cancellation_tier: cancellationTier,
+              refund_status: refundStatus,
+              cancelled_at: cancelledAt,
+              cancel_reason: reason,
+            }
+          : app
       )
     );
 
     fetch(`/api/appointments/${appointmentId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "cancelled" }),
+      body: JSON.stringify({
+        status: "cancelled",
+        refund_amount: refundAmount,
+        cancellation_fee: cancellationFee,
+        cancellation_tier: cancellationTier,
+        refund_status: refundStatus,
+        cancelled_at: cancelledAt,
+      }),
     }).catch(() => {});
 
     addNotification({
       type: "info",
       title: "Appointment Cancelled (TC-10)",
-      message: `Appointment #${appointmentId} cancelled. Time slot freed for other patients.`,
+      message:
+        refundAmount > 0
+          ? `Appointment #${appointmentId} cancelled. Refund of ₹${refundAmount.toFixed(
+              2
+            )} initiated (Fee cut: ₹${cancellationFee.toFixed(2)}).`
+          : `Appointment #${appointmentId} cancelled. Under 4-hour window: No refund applicable.`,
     });
+  };
+
+  // Reschedule Appointment to a new date & slot
+  const rescheduleAppointment = (appointmentId, newDate, newTime, reason = "") => {
+    const rescheduledAt = new Date().toISOString();
+
+    let updatedAppointment = null;
+
+    setAppointments((prev) =>
+      prev.map((app) => {
+        if (app.appointment_id === Number(appointmentId)) {
+          updatedAppointment = {
+            ...app,
+            appointment_date: newDate,
+            appointment_time: newTime,
+            rescheduled: true,
+            rescheduled_at: rescheduledAt,
+            reschedule_reason: reason || "Patient requested reschedule",
+          };
+          return updatedAppointment;
+        }
+        return app;
+      })
+    );
+
+    fetch(`/api/appointments/${appointmentId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        appointment_date: newDate,
+        appointment_time: newTime,
+        rescheduled: true,
+        rescheduled_at: rescheduledAt,
+      }),
+    }).catch(() => {});
+
+    addNotification({
+      type: "success",
+      title: "Appointment Rescheduled",
+      message: `Appointment #${appointmentId} rescheduled to ${newDate} at ${newTime}. No penalty applied.`,
+    });
+
+    return { success: true, appointment: updatedAppointment };
   };
 
   const completeConsultation = (appointmentId) => {
@@ -565,6 +642,7 @@ export function AppProvider({ children }) {
         callNextPatient,
         bookAppointment,
         cancelAppointment,
+        rescheduleAppointment,
         completeConsultation,
         addDoctor,
         addDepartment,

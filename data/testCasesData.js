@@ -76,8 +76,8 @@ export const TEST_CASES_DATA = [
   {
     id: 10,
     module: "Patient",
-    condition: "Cancel existing confirmed booking",
-    expected: "Status updated to 'cancelled', slot freed",
+    condition: "Cancel booking with tiered refund policy (<4h no refund, 4-8h 17% cut, >8h 100% refund)",
+    expected: "Status 'cancelled', exact refund processed based on hours remaining",
     status: "PASS",
     category: "Functional",
   },

@@ -539,13 +539,18 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
               </div>
             </div>
 
-            {/* Security Guarantee */}
-            <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Instant 100% refund if cancelled</span>
-              </span>
-              <span>Hospital Reg #DL-MED-2026-904</span>
+            {/* Security Guarantee & Cancellation Policy */}
+            <div className="space-y-1.5 pt-1">
+              <div className="flex items-center justify-between text-[11px] text-slate-500">
+                <span className="flex items-center gap-1 text-teal-700 font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+                  <span>Free Rescheduling Anytime • Transparent Refund Policy</span>
+                </span>
+                <span>Hospital Reg #DL-MED-2026-904</span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Policy: 100% refund (&gt;8h before), 83% refund with 17% cut (4–8h before), no refund (&lt;4h before).
+              </p>
             </div>
 
             {/* Actions for Step 2 */}

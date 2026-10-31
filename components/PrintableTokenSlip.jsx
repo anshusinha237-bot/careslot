@@ -75,9 +75,14 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
             <span className="text-4xl font-black text-teal-900 tracking-tight block my-1">
               TOKEN #{appointment.token_number}
             </span>
-            <span className="text-xs font-semibold text-slate-600">
+            <span className="text-xs font-semibold text-slate-600 block">
               Please watch the digital OPD board for your turn
             </span>
+            {appointment.rescheduled && (
+              <span className="inline-block mt-2 bg-teal-100 text-teal-800 text-[10px] font-bold px-2 py-0.5 rounded border border-teal-300">
+                Rescheduled to {appointment.appointment_date} ({appointment.appointment_time})
+              </span>
+            )}
           </div>
 
           {/* Key Appointment Details */}

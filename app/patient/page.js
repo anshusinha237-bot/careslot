@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { useApp } from "../../context/AppContext";
 import Navbar from "../../components/Navbar";
 import PrintableTokenSlip from "../../components/PrintableTokenSlip";
-import BookingModal from "../../components/BookingModal";
+import CancellationModal from "../../components/CancellationModal";
+import RescheduleModal from "../../components/RescheduleModal";
 import Link from "next/link";
 import {
   Calendar,
@@ -20,12 +21,25 @@ import {
   History,
   FileText,
   HeartPulse,
+  RefreshCw,
+  ShieldCheck,
+  ArrowRight,
+  Info,
 } from "lucide-react";
 
 export default function PatientDashboardPage() {
-  const { currentUser, appointments, doctors, cancelAppointment } = useApp();
+  const {
+    currentUser,
+    appointments,
+    doctors,
+    cancelAppointment,
+    rescheduleAppointment,
+  } = useApp();
+
   const [selectedSlip, setSelectedSlip] = useState(null);
-  const [bookingDoctor, setBookingDoctor] = useState(null);
+  const [cancellingApp, setCancellingApp] = useState(null);
+  const [reschedulingApp, setReschedulingApp] = useState(null);
+  const [actionBanner, setActionBanner] = useState("");
 
   // Filter appointments for current patient or demo patient (user_id 1)
   const patientId = currentUser ? currentUser.user_id : 1;
@@ -41,6 +55,41 @@ export default function PatientDashboardPage() {
   const pastAppointments = userAppointments
     .filter((app) => app.status === "completed" || app.status === "cancelled")
     .sort((a, b) => new Date(b.appointment_date) - new Date(a.appointment_date));
+
+  // Handle Cancellation confirmation with refund policy
+  const handleConfirmCancellation = (refundDetails) => {
+    if (!cancellingApp) return;
+    const appId = cancellingApp.appointment_id;
+
+    cancelAppointment(appId, refundDetails);
+
+    if (refundDetails.refundAmount > 0) {
+      setActionBanner(
+        `Appointment #${appId} cancelled. Refund of ₹${refundDetails.refundAmount.toFixed(
+          2
+        )} processed (${
+          refundDetails.cancellationFee > 0 ? "17% deduction applied" : "100% full refund"
+        }).`
+      );
+    } else {
+      setActionBanner(
+        `Appointment #${appId} cancelled. (Under 4-hour schedule window: No refund applicable).`
+      );
+    }
+
+    setCancellingApp(null);
+    setTimeout(() => setActionBanner(""), 6000);
+  };
+
+  // Handle Reschedule confirmation
+  const handleConfirmReschedule = (appId, newDate, newSlot, reason) => {
+    rescheduleAppointment(appId, newDate, newSlot, reason);
+    setActionBanner(
+      `Appointment #${appId} successfully rescheduled to ${newDate} at ${newSlot}! No fee or penalty was charged.`
+    );
+    setReschedulingApp(null);
+    setTimeout(() => setActionBanner(""), 6000);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -81,15 +130,65 @@ export default function PatientDashboardPage() {
         </div>
       </div>
 
+      {/* Action Notification Banner */}
+      {actionBanner && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
+          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span className="font-semibold">{actionBanner}</span>
+            </div>
+            <button
+              onClick={() => setActionBanner("")}
+              className="text-emerald-700 hover:text-emerald-900 font-bold text-xs"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Dashboard Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+        {/* CareSlot Policy Summary Banner */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+          <div className="flex items-center gap-2 mb-3">
+            <Info className="w-4 h-4 text-teal-600" />
+            <h3 className="text-xs font-bold uppercase text-slate-700 tracking-wider">
+              CareSlot OPD Cancellation &amp; Reschedule Policy:
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="block font-bold text-slate-800">&gt; 8 Hours Before</span>
+              <span className="text-[11px] text-emerald-700 font-bold block mt-0.5">100% Full Refund</span>
+              <span className="text-[10px] text-slate-400 mt-1 block">0% fee deduction</span>
+            </div>
+            <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-200">
+              <span className="block font-bold text-slate-800">4 – 8 Hours Before</span>
+              <span className="text-[11px] text-amber-800 font-bold block mt-0.5">17% Fee Cut</span>
+              <span className="text-[10px] text-slate-500 mt-1 block">83% credited back</span>
+            </div>
+            <div className="p-3 rounded-xl bg-rose-50/60 border border-rose-200">
+              <span className="block font-bold text-slate-800">&lt; 4 Hours Before</span>
+              <span className="text-[11px] text-rose-700 font-bold block mt-0.5">No Refund (0%)</span>
+              <span className="text-[10px] text-slate-500 mt-1 block">Reserved clinical slot</span>
+            </div>
+            <div className="p-3 rounded-xl bg-teal-50 border border-teal-200">
+              <span className="block font-bold text-teal-900">Rescheduling</span>
+              <span className="text-[11px] text-teal-700 font-bold block mt-0.5">100% Free Anytime</span>
+              <span className="text-[10px] text-slate-500 mt-1 block">Preserves token &amp; fee</span>
+            </div>
+          </div>
+        </div>
+
         {/* Active / Today's Digital Tokens */}
         <div>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></span>
               <h2 className="text-lg font-bold text-slate-900">
-                Active Digital Tokens & Upcoming OPD Visits ({activeAppointments.length})
+                Active Digital Tokens &amp; Upcoming OPD Visits ({activeAppointments.length})
               </h2>
             </div>
             <Link href="/queue" className="text-xs text-teal-600 font-semibold hover:underline">
@@ -113,9 +212,17 @@ export default function PatientDashboardPage() {
                       {/* Top Header */}
                       <div className="flex items-start justify-between gap-4 mb-4">
                         <div>
-                          <span className="text-[10px] uppercase font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
-                            CONFIRMED OPD VISIT
-                          </span>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[10px] uppercase font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+                              CONFIRMED OPD VISIT
+                            </span>
+                            {app.rescheduled && (
+                              <span className="text-[10px] uppercase font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200 flex items-center gap-1">
+                                <Calendar className="w-3 h-3 text-indigo-600" />
+                                <span>Rescheduled</span>
+                              </span>
+                            )}
+                          </div>
                           <h3 className="text-xl font-bold text-slate-900 mt-2">
                             {app.doctor_name}
                           </h3>
@@ -169,11 +276,11 @@ export default function PatientDashboardPage() {
                       <div className="grid grid-cols-2 gap-3 text-xs text-slate-600 mb-4">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-teal-600" />
-                          <span>Date: {app.appointment_date}</span>
+                          <span>Date: <strong className="text-slate-800 font-semibold">{app.appointment_date}</strong></span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-teal-600" />
-                          <span>Slot: {app.appointment_time}</span>
+                          <span>Slot: <strong className="text-slate-800 font-semibold">{app.appointment_time}</strong></span>
                         </div>
                       </div>
 
@@ -199,27 +306,37 @@ export default function PatientDashboardPage() {
                       </div>
                     </div>
 
-                    {/* Card Actions */}
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 gap-3">
+                    {/* Card Actions: Print Slip, Reschedule, Cancel */}
+                    <div className="flex flex-wrap items-center justify-between pt-4 border-t border-slate-100 gap-2">
                       <button
                         onClick={() => setSelectedSlip(app)}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition-colors"
                       >
                         <Printer className="w-3.5 h-3.5" />
-                        <span>Print Digital Slip</span>
+                        <span>Print Slip</span>
                       </button>
 
-                      <button
-                        onClick={() => {
-                          if (confirm("Are you sure you want to cancel this booking? The slot will be freed for other patients.")) {
-                            cancelAppointment(app.appointment_id);
-                          }
-                        }}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold border border-rose-200 transition-colors"
-                      >
-                        <XCircle className="w-3.5 h-3.5" />
-                        <span>Cancel Booking</span>
-                      </button>
+                      <div className="flex items-center gap-2">
+                        {/* Reschedule Button */}
+                        <button
+                          onClick={() => setReschedulingApp(app)}
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200 transition-colors"
+                          title="Reschedule to another date or time without penalty"
+                        >
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>Reschedule Date</span>
+                        </button>
+
+                        {/* Cancel Button */}
+                        <button
+                          onClick={() => setCancellingApp(app)}
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold border border-rose-200 transition-colors"
+                          title="Cancel appointment and review refund"
+                        >
+                          <XCircle className="w-3.5 h-3.5" />
+                          <span>Cancel Booking</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -236,7 +353,7 @@ export default function PatientDashboardPage() {
                 href="/doctors"
                 className="px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold inline-block"
               >
-                Find & Book Doctor
+                Find &amp; Book Doctor
               </Link>
             </div>
           )}
@@ -259,12 +376,12 @@ export default function PatientDashboardPage() {
                   <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold">
                     <tr>
                       <th className="py-3 px-4">Date</th>
-                      <th className="py-3 px-4">Doctor & Specialty</th>
+                      <th className="py-3 px-4">Doctor &amp; Specialty</th>
                       <th className="py-3 px-4">OPD Room</th>
                       <th className="py-3 px-4">Token #</th>
                       <th className="py-3 px-4">Symptoms / Diagnosis</th>
-                      <th className="py-3 px-4">Fee</th>
-                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4">Fee Paid</th>
+                      <th className="py-3 px-4">Status &amp; Refund</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -284,15 +401,31 @@ export default function PatientDashboardPage() {
                           ₹{app.fee?.toFixed(0)}
                         </td>
                         <td className="py-3 px-4">
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              app.status === "completed"
-                                ? "bg-emerald-100 text-emerald-800"
-                                : "bg-rose-100 text-rose-800"
-                            }`}
-                          >
-                            {app.status}
-                          </span>
+                          {app.status === "completed" ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                              completed
+                            </span>
+                          ) : (
+                            <div className="space-y-0.5">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 inline-block">
+                                cancelled
+                              </span>
+                              {app.refund_amount !== undefined && (
+                                <p className="text-[10px] font-medium text-slate-500">
+                                  {app.refund_amount > 0 ? (
+                                    <span className="text-emerald-700 font-semibold">
+                                      Refunded ₹{app.refund_amount.toFixed(0)}
+                                      {app.cancellation_fee > 0 && ` (17% cut: ₹${app.cancellation_fee.toFixed(0)})`}
+                                    </span>
+                                  ) : (
+                                    <span className="text-rose-600 font-semibold">
+                                      No refund (&lt; 4h)
+                                    </span>
+                                  )}
+                                </p>
+                              )}
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -313,6 +446,30 @@ export default function PatientDashboardPage() {
         <PrintableTokenSlip
           appointment={selectedSlip}
           onClose={() => setSelectedSlip(null)}
+        />
+      )}
+
+      {/* Cancellation & Refund Policy Modal */}
+      {cancellingApp && (
+        <CancellationModal
+          appointment={cancellingApp}
+          onClose={() => setCancellingApp(null)}
+          onConfirmCancel={handleConfirmCancellation}
+          onSwitchToReschedule={() => {
+            const target = cancellingApp;
+            setCancellingApp(null);
+            setReschedulingApp(target);
+          }}
+        />
+      )}
+
+      {/* Reschedule Date/Slot Modal */}
+      {reschedulingApp && (
+        <RescheduleModal
+          appointment={reschedulingApp}
+          doctor={doctors.find((d) => d.doctor_id === reschedulingApp.doctor_id)}
+          onClose={() => setReschedulingApp(null)}
+          onConfirmReschedule={handleConfirmReschedule}
         />
       )}
     </div>
