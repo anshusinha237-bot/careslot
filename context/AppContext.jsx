@@ -294,6 +294,9 @@ export function AppProvider({ children }) {
     patientName,
     patientEmail,
     patientPhone,
+    paymentMethod = "UPI",
+    paymentStatus = "paid",
+    transactionId,
   }) => {
     const doc = doctors.find((d) => d.doctor_id === Number(doctorId));
     if (!doc) {
@@ -349,6 +352,9 @@ export function AppProvider({ children }) {
       symptoms: symptoms || "General Consultation",
       status: "confirmed",
       fee: doc.consultation_fee,
+      payment_method: paymentMethod,
+      payment_status: paymentStatus || (paymentMethod === "counter" ? "pay_at_counter" : "paid"),
+      transaction_id: transactionId || `TXN-CS-${Math.floor(100000 + Math.random() * 900000)}`,
       created_at: new Date().toISOString(),
     };
 
@@ -367,6 +373,9 @@ export function AppProvider({ children }) {
         patientEmail,
         patientPhone,
         patientId: currentUser?.user_id,
+        paymentMethod: newAppointment.payment_method,
+        paymentStatus: newAppointment.payment_status,
+        transactionId: newAppointment.transaction_id,
       }),
     }).catch(() => {});
 

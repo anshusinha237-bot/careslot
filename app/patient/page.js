@@ -177,6 +177,22 @@ export default function PatientDashboardPage() {
                         </div>
                       </div>
 
+                      <div className="flex items-center justify-between text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-3">
+                        <span className="text-slate-500">Payment:</span>
+                        <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                          <span>₹{app.fee?.toFixed(0)}</span>
+                          {app.payment_status === "paid" ? (
+                            <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[10px] font-bold">
+                              Paid Online ({app.payment_method || "UPI"})
+                            </span>
+                          ) : (
+                            <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-[10px] font-bold">
+                              Pay at OPD Counter
+                            </span>
+                          )}
+                        </span>
+                      </div>
+
                       <div className="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-4">
                         <span className="font-bold text-slate-700">Symptoms: </span>
                         <span>{app.symptoms}</span>

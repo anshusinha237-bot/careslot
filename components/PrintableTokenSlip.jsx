@@ -131,10 +131,29 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
                 {appointment.symptoms}
               </span>
             </div>
-            <div className="flex justify-between border-t border-slate-100 pt-1.5">
+            <div className="flex justify-between border-t border-slate-100 pt-1.5 items-center">
               <span className="text-slate-500">Consultation Fee:</span>
-              <span className="font-bold text-slate-900">₹{appointment.fee?.toFixed(2)} (Paid / Counter Due)</span>
+              <span className="font-bold text-slate-900">₹{appointment.fee?.toFixed(2)}</span>
             </div>
+            <div className="flex justify-between items-center">
+              <span className="text-slate-500">Payment Status:</span>
+              {appointment.payment_status === "paid" ? (
+                <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded text-[10px] border border-emerald-200">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                  PAID ONLINE ({appointment.payment_method || "UPI"})
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded text-[10px] border border-amber-200">
+                  DUE AT OPD COUNTER (₹{appointment.fee?.toFixed(0)})
+                </span>
+              )}
+            </div>
+            {appointment.transaction_id && (
+              <div className="flex justify-between">
+                <span className="text-slate-500">Transaction ID:</span>
+                <span className="font-mono text-[10px] text-slate-700 font-bold">{appointment.transaction_id}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-slate-500">Booking Reference:</span>
               <span className="font-mono text-[10px] text-slate-500">
