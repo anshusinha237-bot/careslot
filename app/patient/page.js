@@ -51,9 +51,9 @@ export default function PatientDashboardPage() {
     (app) => app.status === "confirmed" || app.status === "in-progress"
   );
 
-  // TC-25: Past medical history sorted by date DESC
+  // Status tracking & past medical history sorted by date DESC
   const pastAppointments = userAppointments
-    .filter((app) => app.status === "completed" || app.status === "cancelled")
+    .filter((app) => app.status === "completed" || app.status === "cancelled" || app.rescheduled)
     .sort((a, b) => new Date(b.appointment_date) - new Date(a.appointment_date));
 
   // Handle Cancellation confirmation with refund policy
@@ -65,15 +65,13 @@ export default function PatientDashboardPage() {
 
     if (refundDetails.refundAmount > 0) {
       setActionBanner(
-        `Appointment #${appId} cancelled. Refund of ₹${refundDetails.refundAmount.toFixed(
+        `Appointment #${appId} cancelled. Status: ${refundDetails.refundStatus} (Refund: ₹${refundDetails.refundAmount.toFixed(
           2
-        )} processed (${
-          refundDetails.cancellationFee > 0 ? "17% deduction applied" : "100% full refund"
-        }).`
+        )}, Fee deduction: ₹${refundDetails.cancellationFee.toFixed(2)}).`
       );
     } else {
       setActionBanner(
-        `Appointment #${appId} cancelled. (Under 4-hour schedule window: No refund applicable).`
+        `Appointment #${appId} cancelled. Status: No Refund (Cancelled within 4-hour threshold).`
       );
     }
 
@@ -81,11 +79,11 @@ export default function PatientDashboardPage() {
     setTimeout(() => setActionBanner(""), 6000);
   };
 
-  // Handle Reschedule confirmation
-  const handleConfirmReschedule = (appId, newDate, newSlot, reason) => {
-    rescheduleAppointment(appId, newDate, newSlot, reason);
+  // Handle Reschedule confirmation with same-specialty fee waiver
+  const handleConfirmReschedule = (appId, newDate, newSlot, reason, deptName) => {
+    rescheduleAppointment(appId, newDate, newSlot, reason, deptName);
     setActionBanner(
-      `Appointment #${appId} successfully rescheduled to ${newDate} at ${newSlot}! No fee or penalty was charged.`
+      `Appointment #${appId} successfully rescheduled to ${deptName || "Same Specialty"} on ${newDate} at ${newSlot}! Standard cancellation penalties were waived.`
     );
     setReschedulingApp(null);
     setTimeout(() => setActionBanner(""), 6000);
@@ -321,20 +319,20 @@ export default function PatientDashboardPage() {
                         <button
                           onClick={() => setReschedulingApp(app)}
                           className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200 transition-colors"
-                          title="Reschedule to another date or time without penalty"
+                          title="Reschedule to same department with penalty waiver"
                         >
                           <Calendar className="w-3.5 h-3.5" />
-                          <span>Reschedule Date</span>
+                          <span>Reschedule</span>
                         </button>
 
-                        {/* Cancel Button */}
+                        {/* Cancel Appointment Button */}
                         <button
                           onClick={() => setCancellingApp(app)}
                           className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold border border-rose-200 transition-colors"
-                          title="Cancel appointment and review refund"
+                          title="Cancel appointment and view real-time refund calculation"
                         >
                           <XCircle className="w-3.5 h-3.5" />
-                          <span>Cancel Booking</span>
+                          <span>Cancel Appointment</span>
                         </button>
                       </div>
                     </div>
@@ -401,30 +399,59 @@ export default function PatientDashboardPage() {
                           ₹{app.fee?.toFixed(0)}
                         </td>
                         <td className="py-3 px-4">
-                          {app.status === "completed" ? (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                              completed
-                            </span>
-                          ) : (
+                          {app.rescheduled && app.status !== "cancelled" ? (
                             <div className="space-y-0.5">
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 inline-block">
-                                cancelled
+                              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200 inline-block">
+                                Rescheduled to {app.rescheduled_to_dept || app.dept_name}
                               </span>
-                              {app.refund_amount !== undefined && (
-                                <p className="text-[10px] font-medium text-slate-500">
-                                  {app.refund_amount > 0 ? (
-                                    <span className="text-emerald-700 font-semibold">
-                                      Refunded ₹{app.refund_amount.toFixed(0)}
-                                      {app.cancellation_fee > 0 && ` (17% cut: ₹${app.cancellation_fee.toFixed(0)})`}
-                                    </span>
-                                  ) : (
-                                    <span className="text-rose-600 font-semibold">
-                                      No refund (&lt; 4h)
-                                    </span>
-                                  )}
-                                </p>
+                              <p className="text-[10px] text-slate-500 font-medium">
+                                Slot: {app.appointment_date} at {app.appointment_time}
+                              </p>
+                            </div>
+                          ) : app.status === "completed" ? (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-800 border border-slate-300">
+                              Completed
+                            </span>
+                          ) : app.status === "cancelled" ? (
+                            <div className="space-y-0.5">
+                              {app.refund_status === "Refund Initiated - 83%" ||
+                              app.cancellation_tier === "more_than_8" ||
+                              app.refund_percent === 83 ? (
+                                <>
+                                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 inline-block">
+                                    Refund Initiated - 83%
+                                  </span>
+                                  <p className="text-[10px] text-slate-500">
+                                    Refund: ₹{app.refund_amount?.toFixed(0)} (17% fee: ₹
+                                    {app.cancellation_fee?.toFixed(0)})
+                                  </p>
+                                </>
+                              ) : app.refund_status === "Refund Initiated - 50%" ||
+                                app.cancellation_tier === "between_4_and_8" ? (
+                                <>
+                                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 inline-block">
+                                    Refund Initiated - 50%
+                                  </span>
+                                  <p className="text-[10px] text-slate-500">
+                                    Partial refund: ₹{app.refund_amount?.toFixed(0)} (50% fee: ₹
+                                    {app.cancellation_fee?.toFixed(0)})
+                                  </p>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300 inline-block">
+                                    No Refund
+                                  </span>
+                                  <p className="text-[10px] text-slate-500">
+                                    Cancelled &lt; 4h threshold (₹0 refund)
+                                  </p>
+                                </>
                               )}
                             </div>
+                          ) : (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800 border border-teal-200">
+                              {app.status}
+                            </span>
                           )}
                         </td>
                       </tr>

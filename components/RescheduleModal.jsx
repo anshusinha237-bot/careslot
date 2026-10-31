@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   RefreshCw,
   Sparkles,
+  Building2,
 } from "lucide-react";
 
 export default function RescheduleModal({
@@ -71,7 +72,13 @@ export default function RescheduleModal({
 
     setIsSubmitting(true);
     setTimeout(() => {
-      onConfirmReschedule(appointment.appointment_id, newDate, selectedSlot, reason);
+      onConfirmReschedule(
+        appointment.appointment_id,
+        newDate,
+        selectedSlot,
+        reason,
+        appointment.dept_name
+      );
       setIsSubmitting(false);
       onClose();
     }, 400);
@@ -88,7 +95,7 @@ export default function RescheduleModal({
             </div>
             <div>
               <h2 className="text-lg font-bold">Reschedule Appointment</h2>
-              <p className="text-xs text-teal-100">Select a new date &amp; available OPD time slot</p>
+              <p className="text-xs text-teal-100">Same Department / Specialty Slot Transfer</p>
             </div>
           </div>
           <button
@@ -107,9 +114,10 @@ export default function RescheduleModal({
               <span className="font-bold text-slate-800">{appointment.doctor_name}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-slate-500">Department / OPD Room:</span>
-              <span className="font-medium text-slate-700">
-                {appointment.dept_name} • {appointment.opd_room}
+              <span className="text-slate-500">Department / Specialty:</span>
+              <span className="font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded border border-teal-200 flex items-center gap-1">
+                <Building2 className="w-3 h-3 text-teal-600" />
+                <span>{appointment.dept_name}</span>
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -120,20 +128,20 @@ export default function RescheduleModal({
             </div>
             <div className="flex items-center justify-between pt-1 border-t border-slate-200">
               <span className="text-slate-500">OPD Queue Token:</span>
-              <span className="font-mono font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+              <span className="font-mono font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200">
                 Token #{appointment.token_number} (Preserved)
               </span>
             </div>
           </div>
 
-          {/* Zero Fee Reschedule Guarantee */}
-          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-start gap-2.5">
+          {/* Same-Specialty Penalty Waiver Notice */}
+          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-start gap-2.5 shadow-2xs">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
             <div>
-              <p className="font-bold">100% Free Rescheduling Guarantee</p>
+              <p className="font-bold">Same Department Waiver Policy Active</p>
               <p className="text-[11px] text-emerald-800/90 mt-0.5 leading-relaxed">
-                No cancellation cuts or extra charges. Your paid consultation fee of ₹
-                {(appointment.fee || 500).toFixed(0)} is transferred directly to your new date.
+                Standard cancellation penalties are <strong>100% waived</strong> for rescheduling within the same specialty ({appointment.dept_name}). Your consultation fee (₹
+                {(appointment.fee || 500).toFixed(0)}) and queue token are transferred seamlessly with zero deductions.
               </p>
             </div>
           </div>
@@ -168,7 +176,7 @@ export default function RescheduleModal({
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-teal-600" />
-              <span>Select New OPD Time Slot *:</span>
+              <span>Select Available OPD Time Slot *:</span>
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {availableSlots.map((slot) => {
@@ -242,7 +250,7 @@ export default function RescheduleModal({
               ) : (
                 <>
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Confirm Reschedule to {newDate}</span>
+                  <span>Confirm Reschedule to {appointment.dept_name}</span>
                 </>
               )}
             </button>

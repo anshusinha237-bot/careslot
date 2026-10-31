@@ -475,8 +475,8 @@ export function AppProvider({ children }) {
     });
   };
 
-  // Reschedule Appointment to a new date & slot
-  const rescheduleAppointment = (appointmentId, newDate, newTime, reason = "") => {
+  // Reschedule Appointment to a new date & slot with Same-Department waiver
+  const rescheduleAppointment = (appointmentId, newDate, newTime, reason = "", deptName = "") => {
     const rescheduledAt = new Date().toISOString();
 
     let updatedAppointment = null;
@@ -484,11 +484,13 @@ export function AppProvider({ children }) {
     setAppointments((prev) =>
       prev.map((app) => {
         if (app.appointment_id === Number(appointmentId)) {
+          const targetDept = deptName || app.dept_name || "Cardiology";
           updatedAppointment = {
             ...app,
             appointment_date: newDate,
             appointment_time: newTime,
             rescheduled: true,
+            rescheduled_to_dept: targetDept,
             rescheduled_at: rescheduledAt,
             reschedule_reason: reason || "Patient requested reschedule",
           };
@@ -505,6 +507,7 @@ export function AppProvider({ children }) {
         appointment_date: newDate,
         appointment_time: newTime,
         rescheduled: true,
+        rescheduled_to_dept: deptName,
         rescheduled_at: rescheduledAt,
       }),
     }).catch(() => {});
@@ -512,7 +515,7 @@ export function AppProvider({ children }) {
     addNotification({
       type: "success",
       title: "Appointment Rescheduled",
-      message: `Appointment #${appointmentId} rescheduled to ${newDate} at ${newTime}. No penalty applied.`,
+      message: `Appointment #${appointmentId} rescheduled to ${newDate} at ${newTime} (${deptName || "Same Specialty"}). No penalty applied.`,
     });
 
     return { success: true, appointment: updatedAppointment };
