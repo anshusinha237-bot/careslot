@@ -21,7 +21,6 @@ import {
   ArrowRight,
   ArrowLeft,
   Wallet,
-  Receipt,
   Check,
 } from "lucide-react";
 
@@ -39,8 +38,8 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
   const [errorMsg, setErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Payment State
-  const [paymentMethod, setPaymentMethod] = useState("upi"); // upi, card, netbanking, counter
+  // Payment State (Digital Only)
+  const [paymentMethod, setPaymentMethod] = useState("upi"); // upi, card, netbanking
   const [upiId, setUpiId] = useState("patient@okhdfcbank");
   const [cardNumber, setCardNumber] = useState("4532 •••• •••• 8821");
   const [cardExpiry, setCardExpiry] = useState("08/28");
@@ -109,9 +108,8 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
     setIsSubmitting(true);
 
     const generatedTxnId = `TXN-CS-${Math.floor(100000 + Math.random() * 900000)}`;
-    const paymentStatus = paymentMethod === "counter" ? "pay_at_counter" : "paid";
 
-    // Simulate payment gateway handshake & ACID transaction locking
+    // Simulate online payment gateway handshake & ACID transaction locking
     setTimeout(() => {
       const result = bookAppointment({
         doctorId: doctor.doctor_id,
@@ -126,10 +124,8 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
             ? "UPI / QR Code"
             : paymentMethod === "card"
             ? "Credit/Debit Card"
-            : paymentMethod === "netbanking"
-            ? `Net Banking (${selectedBank})`
-            : "Hospital OPD Counter",
-        paymentStatus,
+            : `Net Banking (${selectedBank})`,
+        paymentStatus: "paid",
         transactionId: generatedTxnId,
       });
 
@@ -375,12 +371,11 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                 Choose Payment Method:
               </label>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+              <div className="grid grid-cols-3 gap-2 mb-3">
                 {[
                   { id: "upi", label: "UPI / QR", icon: QrCode },
-                  { id: "card", label: "Cards", icon: CreditCard },
+                  { id: "card", label: "Debit/Credit Card", icon: CreditCard },
                   { id: "netbanking", label: "NetBanking", icon: Building },
-                  { id: "counter", label: "Pay at OPD", icon: Receipt },
                 ].map((item) => {
                   const Icon = item.icon;
                   const isActive = paymentMethod === item.id;
@@ -519,23 +514,6 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                     </div>
                   </div>
                 )}
-
-                {/* 4. Pay at Hospital OPD Counter Option */}
-                {paymentMethod === "counter" && (
-                  <div className="space-y-2 p-1">
-                    <div className="flex items-center gap-2 text-teal-800 font-bold">
-                      <Receipt className="w-4 h-4 text-teal-600" />
-                      <span>Pay at Hospital OPD Counter on Arrival</span>
-                    </div>
-                    <p className="text-slate-600 leading-relaxed text-[11px]">
-                      Your digital token will be reserved immediately. You can settle the consultation fee of <strong>₹{doctor.consultation_fee.toFixed(0)}</strong> in cash or card at the OPD triage desk before entering <strong>{doctor.opd_room}</strong>.
-                    </p>
-                    <div className="bg-amber-50 border border-amber-200 p-2.5 rounded-xl text-amber-900 text-[10px] flex items-center gap-2">
-                      <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                      <span>Please arrive 15 minutes before your time slot ({selectedSlot}) for counter verification.</span>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -575,11 +553,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                 ) : (
                   <>
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>
-                      {paymentMethod === "counter"
-                        ? `Confirm & Pay at Counter (₹${doctor.consultation_fee.toFixed(0)})`
-                        : `Pay ₹${doctor.consultation_fee.toFixed(0)} & Generate Token`}
-                    </span>
+                    <span>Pay ₹{doctor.consultation_fee.toFixed(0)} &amp; Generate Token</span>
                   </>
                 )}
               </button>
