@@ -13,6 +13,7 @@ import {
   FileText,
   Activity,
   QrCode,
+  Building2,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -54,16 +55,16 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
           {/* Hospital Header */}
           <div className="text-center border-b-2 border-dashed border-slate-300 pb-4 mb-4">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <Activity className="w-6 h-6 text-blue-600" />
-              <h1 className="text-xl font-black tracking-tight text-slate-900 uppercase">
-                CareSlot Hospital OPD
+              <Building2 className="w-6 h-6 text-blue-600" />
+              <h1 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 uppercase">
+                {appointment.hospital_name || "CareSlot Apex Multi-Specialty Hospital"}
               </h1>
             </div>
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-              Out-Patient Department (OPD) Consultation Token &amp; Slip
+            <p className="text-[11px] font-bold text-blue-700 uppercase tracking-wider">
+              {appointment.hospital_branch || "Central Healthcare City"} • OPD Consultation Slip
             </p>
-            <p className="text-[10px] text-slate-400 mt-0.5">
-              Sector 12, Health City • Tel: +91 (11) 2658-8500 • Emergency: 108
+            <p className="text-[10px] text-slate-500 mt-0.5">
+              {appointment.hospital_address || "Block A-D, Sector 12, Health City, New Delhi - 110029"} • Tel: +91 (11) 2658-8500
             </p>
           </div>
 
@@ -96,11 +97,13 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
             </div>
 
             <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Location</span>
-              <span className="font-bold text-slate-900 text-sm block">
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">Hospital &amp; Room</span>
+              <span className="font-bold text-slate-900 text-xs sm:text-sm block">
                 {appointment.opd_room}
               </span>
-              <span className="text-slate-500">Wait in Main Concourse</span>
+              <span className="text-blue-700 font-semibold text-[10px] block mt-0.5 truncate">
+                {appointment.hospital_name || "Apex Main Campus"}
+              </span>
             </div>
 
             <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">

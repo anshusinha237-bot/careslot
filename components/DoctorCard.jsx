@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { getDoctorHospitals } from "../data/initialData";
 import {
   Clock,
   MapPin,
@@ -16,12 +17,15 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
+  Building2,
 } from "lucide-react";
 
 export default function DoctorCard({ doctor, onBook }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showFullSchedule, setShowFullSchedule] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState("Just now");
+
+  const hospitals = getDoctorHospitals(doctor);
 
   const handleManualRefresh = (e) => {
     e.stopPropagation();
@@ -120,6 +124,28 @@ export default function DoctorCard({ doctor, onBook }) {
             </p>
           </div>
 
+          {/* Hospital OPD Availability Pill */}
+          <div className="mb-3.5 p-2.5 rounded-2xl bg-blue-50/70 border border-blue-200/90 flex items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0">
+                <Building2 className="w-3.5 h-3.5" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-[10px] uppercase font-bold text-blue-900 block tracking-wider leading-none">
+                  OPD Available At:
+                </span>
+                <span className="font-bold text-slate-900 truncate block text-xs mt-0.5">
+                  {hospitals[0]?.name}
+                </span>
+              </div>
+            </div>
+            {hospitals.length > 1 && (
+              <span className="text-[10px] font-bold text-blue-800 bg-white px-2 py-0.5 rounded-full shrink-0 border border-blue-300 shadow-2xs">
+                +{hospitals.length - 1} more center{hospitals.length > 2 ? "s" : ""}
+              </span>
+            )}
+          </div>
+
           {/* High Contrast Badges: Room, Experience & Rating */}
           <div className="flex flex-wrap items-center gap-2 text-xs mb-4">
             {/* High contrast OPD Room Pill */}
@@ -203,6 +229,43 @@ export default function DoctorCard({ doctor, onBook }) {
                   </span>
                 )}
               </div>
+
+              {/* Multi-Hospital OPD Schedule Expanded View */}
+              {showFullSchedule && (
+                <div className="mt-3.5 pt-3 border-t border-slate-200 space-y-2 text-xs">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700 block">
+                    All Hospital OPD Centers for {doctor.full_name}:
+                  </span>
+                  <div className="space-y-2">
+                    {hospitals.map((hosp) => (
+                      <div
+                        key={hosp.hospital_id}
+                        className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-2"
+                      >
+                        <div className="min-w-0">
+                          <p className="font-bold text-slate-900 text-xs truncate">
+                            {hosp.name}
+                          </p>
+                          <p className="text-[10px] text-slate-500 truncate">{hosp.address}</p>
+                          <p className="text-[11px] text-slate-700 flex items-center gap-1.5 mt-1 font-medium">
+                            <span className="font-bold text-blue-700">{hosp.opd_room || doctor.opd_room}</span>
+                            <span>•</span>
+                            <span>{hosp.days} ({hosp.timings || hosp.shift_hours || doctor.shift_hours})</span>
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          disabled={doctor.current_status === "On-Leave"}
+                          onClick={() => onBook({ ...doctor, selected_hospital_id: hosp.hospital_id })}
+                          className="shrink-0 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-2xs mt-1"
+                        >
+                          Book OPD
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

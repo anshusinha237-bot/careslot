@@ -15,6 +15,7 @@ import {
   Activity,
   ArrowRight,
   ShieldAlert,
+  Building2,
 } from "lucide-react";
 
 export default function LiveQueueBoardPage() {
@@ -282,7 +283,11 @@ export default function LiveQueueBoardPage() {
                   </div>
 
                   <h3 className="font-bold text-base text-white">{doc.full_name}</h3>
-                  <p className="text-xs text-blue-400 font-medium mb-4">{doc.dept_name}</p>
+                  <p className="text-xs text-blue-400 font-medium">{doc.dept_name}</p>
+                  <p className="text-[10px] text-slate-400 flex items-center gap-1 mt-1 mb-4">
+                    <Building2 className="w-3 h-3 text-slate-500 shrink-0" />
+                    <span className="truncate">{doc.hospitals?.[0]?.short_name || "Apex Central Campus"}</span>
+                  </p>
 
                   {/* Gigantic Token Display */}
                   <div className="bg-slate-950/90 rounded-xl p-4 border border-slate-800 text-center mb-3">

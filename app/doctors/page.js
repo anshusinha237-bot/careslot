@@ -46,11 +46,20 @@ export default function DoctorsDirectoryPage() {
   // Filter & Sort Logic
   const filteredDoctors = doctors
     .filter((doc) => {
+      const q = searchQuery.toLowerCase();
+      const hospitalMatches = doc.hospitals?.some(
+        (h) =>
+          h.name?.toLowerCase().includes(q) ||
+          h.branch?.toLowerCase().includes(q) ||
+          h.short_name?.toLowerCase().includes(q)
+      );
+
       const matchesSearch =
-        doc.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doc.dept_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doc.qualification.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doc.opd_room.toLowerCase().includes(searchQuery.toLowerCase());
+        doc.full_name.toLowerCase().includes(q) ||
+        doc.dept_name.toLowerCase().includes(q) ||
+        doc.qualification.toLowerCase().includes(q) ||
+        doc.opd_room.toLowerCase().includes(q) ||
+        Boolean(hospitalMatches);
 
       const matchesDept = selectedDept === "All" || doc.dept_name === selectedDept;
       const matchesStatus = selectedStatus === "All" || doc.current_status === selectedStatus;

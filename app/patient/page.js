@@ -42,6 +42,7 @@ import {
   AlertTriangle,
   ChevronRight,
   ExternalLink,
+  Building2,
 } from "lucide-react";
 
 export default function PatientDashboardPage() {
@@ -374,6 +375,10 @@ export default function PatientDashboardPage() {
                               <p className="text-xs font-semibold text-blue-600">
                                 {app.dept_name} • {app.opd_room}
                               </p>
+                              <div className="flex items-center gap-1.5 text-xs text-slate-800 font-bold mt-1.5 bg-blue-50/80 px-2.5 py-1 rounded-lg border border-blue-200/80">
+                                <Building2 className="w-3.5 h-3.5 text-blue-700 shrink-0" />
+                                <span className="truncate">{app.hospital_name || "CareSlot Apex Multi-Specialty Hospital"}</span>
+                              </div>
                             </div>
 
                             {/* Large Token Badge */}

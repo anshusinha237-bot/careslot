@@ -43,10 +43,10 @@ export default function PrintableInvoiceModal({ invoice, onClose }) {
           <div className="flex items-start justify-between border-b border-slate-200 pb-4">
             <div>
               <h2 className="text-xl font-black text-slate-900">
-                CareSlot <span className="text-blue-600">Hospital OPD</span>
+                {invoice.hospital_name || "CareSlot Apex Multi-Specialty Hospital"}
               </h2>
-              <p className="text-xs text-slate-500">GSTIN: 07AAAAA0000A1Z5</p>
-              <p className="text-[11px] text-slate-400">Sector 12, Health City, New Delhi - 110029</p>
+              <p className="text-xs text-slate-500">GSTIN: 07AAAAA0000A1Z5 • {invoice.hospital_branch || "OPD Services"}</p>
+              <p className="text-[11px] text-slate-400">{invoice.hospital_address || "Sector 12, Health City, New Delhi - 110029"}</p>
             </div>
             <div className="text-right">
               <span className="text-xs font-mono font-bold text-slate-900 block">

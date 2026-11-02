@@ -32,6 +32,7 @@ import {
   Receipt,
   Printer,
   ChevronDown,
+  Building2,
 } from "lucide-react";
 
 export default function DoctorDashboardPage() {
@@ -198,6 +199,10 @@ export default function DoctorDashboardPage() {
                   </span>
                   <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
                     {activeDoctor.opd_room}
+                  </span>
+                  <span className="text-xs font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200 flex items-center gap-1">
+                    <Building2 className="w-3 h-3 text-blue-600" />
+                    {activeDoctor.hospitals?.[0]?.short_name || "Apex Central Campus"}
                   </span>
                   <span className="text-xs text-slate-400">• Fee: ₹{activeDoctor.consultation_fee}</span>
                 </div>

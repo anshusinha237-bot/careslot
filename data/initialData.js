@@ -1,5 +1,151 @@
 // Initial mock data mirroring the CareSlot project report specifications
 
+export const INITIAL_HOSPITALS = [
+  {
+    hospital_id: "HOSP-01",
+    name: "CareSlot Apex Multi-Specialty Hospital (Central Campus)",
+    short_name: "Apex Central Campus",
+    branch: "Central Healthcare City",
+    address: "Block A-D, Sector 12, Health City, New Delhi - 110029",
+    landmark: "Near Central Metro Station, Gate 3",
+    city: "New Delhi",
+    phone: "+91 (11) 2658-8500",
+    emergency: "108 / +91 (11) 2658-9999",
+    type: "Tertiary Care Hospital & Research Institute",
+    tag: "Main Flagship Campus • 24x7 ICU & Emergency",
+    badge: "Flagship Campus",
+    rating: 4.9,
+    beds: 650,
+  },
+  {
+    hospital_id: "HOSP-02",
+    name: "CareSlot MedCity & Heart Center (South Campus)",
+    short_name: "MedCity South Campus",
+    branch: "South Extension & Ring Road",
+    address: "Plot 42-45, Ring Road, South Extension Part II, New Delhi - 110049",
+    landmark: "Opposite South Extension Flyover",
+    city: "New Delhi",
+    phone: "+91 (11) 4102-3300",
+    emergency: "108 / +91 (11) 4102-3399",
+    type: "Super-Specialty Cardiac & Neuro Center",
+    tag: "South Delhi Hub • Advanced Daycare Surgery",
+    badge: "Cardiac & Neuro Wing",
+    rating: 4.85,
+    beds: 380,
+  },
+  {
+    hospital_id: "HOSP-03",
+    name: "CareSlot Women, Child & Orthopedic Pavilion (West Campus)",
+    short_name: "West Care Pavilion",
+    branch: "Rajouri Garden & West Enclave",
+    address: "Tower 2, Shivaji Marg, Rajouri Garden, New Delhi - 110027",
+    landmark: "Next to Metro Pillar 382",
+    city: "New Delhi",
+    phone: "+91 (11) 2519-7000",
+    emergency: "108 / +91 (11) 2519-7099",
+    type: "Specialty Mother, Child & Bone Care Center",
+    tag: "Mother, Child & Ortho Care Institute",
+    badge: "Pediatric & Maternity Wing",
+    rating: 4.8,
+    beds: 260,
+  },
+  {
+    hospital_id: "HOSP-04",
+    name: "CareSlot Wellness & Multispecialty Clinic (East Campus)",
+    short_name: "Patparganj Clinic Hub",
+    branch: "Mayur Vihar & Patparganj",
+    address: "14 Institutional Area, IP Extension, Patparganj, New Delhi - 110092",
+    landmark: "Near Max Balaji Roundabout",
+    city: "New Delhi",
+    phone: "+91 (11) 2271-4400",
+    emergency: "108 / +91 (11) 2271-4499",
+    type: "Comprehensive Outpatient & Diagnostic Center",
+    tag: "Day OPD & Comprehensive Diagnostics",
+    badge: "Outpatient Center",
+    rating: 4.75,
+    beds: 180,
+  },
+];
+
+export function getDoctorHospitals(doctor) {
+  if (doctor?.hospitals && Array.isArray(doctor.hospitals) && doctor.hospitals.length > 0) {
+    return doctor.hospitals;
+  }
+
+  const dept = (doctor?.dept_name || "").toLowerCase();
+  const room = doctor?.opd_room || "OPD Room 102";
+  const shift = doctor?.shift_hours || "09:00 AM - 01:30 PM";
+
+  const list = [
+    {
+      hospital_id: "HOSP-01",
+      name: "CareSlot Apex Multi-Specialty Hospital (Central Campus)",
+      short_name: "Apex Central Campus",
+      branch: "Central Healthcare City",
+      address: "Block A-D, Sector 12, Health City, New Delhi - 110029",
+      landmark: "Near Central Metro Station, Gate 3",
+      opd_room: room,
+      days: "Mon, Wed, Fri",
+      timings: shift,
+      shift_hours: shift,
+      tag: "Main Flagship Campus • 24x7 ICU & Emergency",
+      badge: "Flagship Campus",
+      is_primary: true,
+    },
+    {
+      hospital_id: "HOSP-02",
+      name: "CareSlot MedCity & Heart Center (South Campus)",
+      short_name: "MedCity South Campus",
+      branch: "South Extension & Ring Road",
+      address: "Plot 42-45, Ring Road, South Extension Part II, New Delhi - 110049",
+      landmark: "Opposite South Extension Flyover",
+      opd_room: `OPD Suite ${((doctor?.doctor_id || 101) % 10) + 201} (${doctor?.dept_name || "Specialty"} Wing)`,
+      days: "Tue, Thu, Sat",
+      timings: "02:30 PM - 06:30 PM",
+      shift_hours: "02:30 PM - 06:30 PM",
+      tag: "South Delhi Hub • Advanced Daycare Surgery",
+      badge: "Cardiac & Neuro Wing",
+      is_primary: false,
+    },
+  ];
+
+  if (dept.includes("pediatric") || dept.includes("gynec") || dept.includes("ortho")) {
+    list.push({
+      hospital_id: "HOSP-03",
+      name: "CareSlot Women, Child & Orthopedic Pavilion (West Campus)",
+      short_name: "West Care Pavilion",
+      branch: "Rajouri Garden & West Enclave",
+      address: "Tower 2, Shivaji Marg, Rajouri Garden, New Delhi - 110027",
+      landmark: "Next to Metro Pillar 382",
+      opd_room: `Consultation Bay ${((doctor?.doctor_id || 101) % 6) + 1}`,
+      days: "Mon & Thu Evening",
+      timings: "04:30 PM - 07:30 PM",
+      shift_hours: "04:30 PM - 07:30 PM",
+      tag: "Mother, Child & Ortho Care Institute",
+      badge: "Specialty Pavilion",
+      is_primary: false,
+    });
+  } else {
+    list.push({
+      hospital_id: "HOSP-04",
+      name: "CareSlot Wellness & Multispecialty Clinic (East Campus)",
+      short_name: "Patparganj Clinic Hub",
+      branch: "Mayur Vihar & Patparganj",
+      address: "14 Institutional Area, IP Extension, Patparganj, New Delhi - 110092",
+      landmark: "Near Max Balaji Roundabout",
+      opd_room: `OPD Unit ${((doctor?.doctor_id || 101) % 5) + 1}`,
+      days: "Wed & Sat Evening",
+      timings: "05:00 PM - 08:00 PM",
+      shift_hours: "05:00 PM - 08:00 PM",
+      tag: "Day OPD & Comprehensive Diagnostics",
+      badge: "Outpatient Clinic",
+      is_primary: false,
+    });
+  }
+
+  return list;
+}
+
 export const INITIAL_DEPARTMENTS = [
   {
     dept_id: 1,
@@ -442,6 +588,23 @@ export const INITIAL_APPOINTMENTS = [
     created_at: "2026-10-15 12:00:00",
   },
 ];
+
+// Enrich initial doctors with multi-hospital OPD availability
+INITIAL_DOCTORS.forEach((doc) => {
+  if (!doc.hospitals) {
+    doc.hospitals = getDoctorHospitals(doc);
+  }
+});
+
+// Enrich initial appointments with hospital metadata
+INITIAL_APPOINTMENTS.forEach((app) => {
+  if (!app.hospital_name) {
+    app.hospital_id = "HOSP-01";
+    app.hospital_name = "CareSlot Apex Multi-Specialty Hospital (Central Campus)";
+    app.hospital_branch = "Central Healthcare City";
+    app.hospital_address = "Block A-D, Sector 12, Health City, New Delhi - 110029";
+  }
+});
 
 export const DEFAULT_USERS = {
   admin: {

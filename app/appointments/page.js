@@ -26,6 +26,7 @@ import {
   Stethoscope,
   Activity,
   User,
+  Building2,
 } from "lucide-react";
 
 export default function AppointmentsPage() {
@@ -276,7 +277,10 @@ export default function AppointmentsPage() {
                       <td className="py-4 px-4">
                         <p className="font-bold text-slate-900">{app.doctor_name}</p>
                         <p className="text-[11px] text-blue-600 font-semibold">{app.dept_name}</p>
-                        <span className="text-[10px] text-slate-400 font-mono">{app.opd_room}</span>
+                        <div className="flex items-center gap-1 text-[10px] text-slate-600 font-medium mt-0.5">
+                          <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
+                          <span className="truncate max-w-[170px]">{app.hospital_name || "Apex Main Campus"} • {app.opd_room}</span>
+                        </div>
                       </td>
 
                       {/* Date & Slot */}
