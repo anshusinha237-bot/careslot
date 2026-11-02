@@ -206,7 +206,7 @@ export default function SymptomCheckerModal({ isOpen, onClose, onSelectDoctor })
                           onClose();
                           if (onSelectDoctor) onSelectDoctor(doc);
                         }}
-                        className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold flex items-center gap-1 shadow-xs"
+                        className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-1 shadow-xs"
                       >
                         <span>Book</span>
                         <ArrowRight className="w-3 h-3" />

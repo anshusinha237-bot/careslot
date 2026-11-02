@@ -98,12 +98,12 @@ export default function PatientDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-teal-600 to-emerald-500 text-white font-bold text-xl flex items-center justify-center shadow-md">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white font-bold text-xl flex items-center justify-center shadow-md">
                 {currentUser?.full_name?.charAt(0) || "P"}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-teal-700 uppercase tracking-wider bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                  <span className="text-xs font-bold text-blue-700 uppercase tracking-wider bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                     Patient OPD Portal
                   </span>
                   <span className="text-xs text-slate-400">ID: #CS-PAT-{currentUser?.user_id || "101"}</span>
@@ -119,7 +119,7 @@ export default function PatientDashboardPage() {
 
             <Link
               href="/doctors"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 self-start sm:self-auto transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 self-start sm:self-auto transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span>Book New OPD Slot</span>
@@ -131,14 +131,14 @@ export default function PatientDashboardPage() {
       {/* Action Notification Banner */}
       {actionBanner && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
-          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between gap-3 shadow-xs">
+          <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 flex items-center justify-between gap-3 shadow-xs">
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
               <span className="font-semibold">{actionBanner}</span>
             </div>
             <button
               onClick={() => setActionBanner("")}
-              className="text-emerald-700 hover:text-emerald-900 font-bold text-xs"
+              className="text-blue-700 hover:text-blue-900 font-bold text-xs"
             >
               Dismiss
             </button>
@@ -151,7 +151,7 @@ export default function PatientDashboardPage() {
         {/* CareSlot Policy Summary Banner */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
           <div className="flex items-center gap-2 mb-3">
-            <Info className="w-4 h-4 text-teal-600" />
+            <Info className="w-4 h-4 text-blue-600" />
             <h3 className="text-xs font-bold uppercase text-slate-700 tracking-wider">
               CareSlot OPD Cancellation &amp; Reschedule Policy:
             </h3>
@@ -172,9 +172,9 @@ export default function PatientDashboardPage() {
               <span className="text-[11px] text-rose-700 font-bold block mt-0.5">No Refund (0%)</span>
               <span className="text-[10px] text-slate-500 mt-1 block">Reserved clinical slot</span>
             </div>
-            <div className="p-3 rounded-xl bg-teal-50 border border-teal-200">
-              <span className="block font-bold text-teal-900">Rescheduling</span>
-              <span className="text-[11px] text-teal-700 font-bold block mt-0.5">100% Free Anytime</span>
+            <div className="p-3 rounded-xl bg-blue-50 border border-blue-200">
+              <span className="block font-bold text-blue-900">Rescheduling</span>
+              <span className="text-[11px] text-blue-700 font-bold block mt-0.5">100% Free Anytime</span>
               <span className="text-[10px] text-slate-500 mt-1 block">Preserves token &amp; fee</span>
             </div>
           </div>
@@ -184,12 +184,12 @@ export default function PatientDashboardPage() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
               <h2 className="text-lg font-bold text-slate-900">
                 Active Digital Tokens &amp; Upcoming OPD Visits ({activeAppointments.length})
               </h2>
             </div>
-            <Link href="/queue" className="text-xs text-teal-600 font-semibold hover:underline">
+            <Link href="/queue" className="text-xs text-blue-600 font-semibold hover:underline">
               View Hospital Concourse Display →
             </Link>
           </div>
@@ -204,14 +204,14 @@ export default function PatientDashboardPage() {
                 return (
                   <div
                     key={app.appointment_id}
-                    className="bg-white rounded-2xl border-2 border-teal-500/40 p-6 shadow-md flex flex-col justify-between"
+                    className="bg-white rounded-2xl border-2 border-blue-500/40 p-6 shadow-md flex flex-col justify-between"
                   >
                     <div>
                       {/* Top Header */}
                       <div className="flex items-start justify-between gap-4 mb-4">
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-[10px] uppercase font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+                            <span className="text-[10px] uppercase font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
                               CONFIRMED OPD VISIT
                             </span>
                             {app.rescheduled && (
@@ -224,13 +224,13 @@ export default function PatientDashboardPage() {
                           <h3 className="text-xl font-bold text-slate-900 mt-2">
                             {app.doctor_name}
                           </h3>
-                          <p className="text-xs font-semibold text-teal-600">
+                          <p className="text-xs font-semibold text-blue-600">
                             {app.dept_name} • {app.opd_room}
                           </p>
                         </div>
 
                         {/* Large Token Badge */}
-                        <div className="bg-gradient-to-br from-teal-500 to-emerald-600 text-white p-3 rounded-2xl text-center min-w-[100px] shadow-sm">
+                        <div className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-3 rounded-2xl text-center min-w-[100px] shadow-sm">
                           <span className="text-[9px] uppercase font-bold tracking-widest block opacity-90">
                             OPD TOKEN
                           </span>
@@ -251,7 +251,7 @@ export default function PatientDashboardPage() {
 
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-slate-500">Your Queue Position:</span>
-                          <span className="font-bold text-teal-700">
+                          <span className="font-bold text-blue-700">
                             {difference <= 0
                               ? "Now inside / Consult in progress"
                               : difference === 1
@@ -273,11 +273,11 @@ export default function PatientDashboardPage() {
                       {/* Date & Time Slot Details */}
                       <div className="grid grid-cols-2 gap-3 text-xs text-slate-600 mb-4">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-teal-600" />
+                          <Calendar className="w-4 h-4 text-blue-600" />
                           <span>Date: <strong className="text-slate-800 font-semibold">{app.appointment_date}</strong></span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-teal-600" />
+                          <Clock className="w-4 h-4 text-blue-600" />
                           <span>Slot: <strong className="text-slate-800 font-semibold">{app.appointment_time}</strong></span>
                         </div>
                       </div>
@@ -287,7 +287,7 @@ export default function PatientDashboardPage() {
                         <span className="font-bold text-slate-800 flex items-center gap-1.5">
                           <span>₹{app.fee?.toFixed(0)}</span>
                           {app.payment_status === "paid" ? (
-                            <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[10px] font-bold">
+                            <span className="text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 text-[10px] font-bold">
                               Paid Online ({app.payment_method || "UPI"})
                             </span>
                           ) : (
@@ -308,7 +308,7 @@ export default function PatientDashboardPage() {
                     <div className="flex flex-wrap items-center justify-between pt-4 border-t border-slate-100 gap-2">
                       <button
                         onClick={() => setSelectedSlip(app)}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold border border-blue-200 transition-colors"
                       >
                         <Printer className="w-3.5 h-3.5" />
                         <span>Print Slip</span>
@@ -349,7 +349,7 @@ export default function PatientDashboardPage() {
               </p>
               <Link
                 href="/doctors"
-                className="px-4 py-2.5 bg-teal-600 text-white rounded-xl text-xs font-bold inline-block"
+                className="px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold inline-block"
               >
                 Find &amp; Book Doctor
               </Link>
@@ -388,7 +388,7 @@ export default function PatientDashboardPage() {
                         <td className="py-3 px-4 font-mono font-medium">{app.appointment_date}</td>
                         <td className="py-3 px-4">
                           <p className="font-bold text-slate-900">{app.doctor_name}</p>
-                          <p className="text-[10px] text-teal-600">{app.dept_name}</p>
+                          <p className="text-[10px] text-blue-600">{app.dept_name}</p>
                         </td>
                         <td className="py-3 px-4 text-slate-600">{app.opd_room}</td>
                         <td className="py-3 px-4 font-mono font-bold">#{app.token_number}</td>
@@ -449,7 +449,7 @@ export default function PatientDashboardPage() {
                               )}
                             </div>
                           ) : (
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800 border border-teal-200">
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
                               {app.status}
                             </span>
                           )}

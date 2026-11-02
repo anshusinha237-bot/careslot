@@ -170,7 +170,7 @@ export default function CancellationModal({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-500">Scheduled Time:</span>
-              <span className="font-mono font-bold text-teal-700">
+              <span className="font-mono font-bold text-blue-700">
                 {appointment.appointment_date} at {appointment.appointment_time}
               </span>
             </div>
@@ -184,10 +184,10 @@ export default function CancellationModal({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold text-slate-800 uppercase flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-teal-600" />
+                <Clock className="w-3.5 h-3.5 text-blue-600" />
                 <span>Timeline Relative to Scheduled Time:</span>
               </label>
-              <span className="text-[10px] text-teal-700 font-semibold bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+              <span className="text-[10px] text-blue-700 font-semibold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                 Rule Engine
               </span>
             </div>
@@ -270,7 +270,7 @@ export default function CancellationModal({
               </div>
 
               <div>
-                <p className="text-[10px] text-teal-300 uppercase font-semibold">
+                <p className="text-[10px] text-blue-300 uppercase font-semibold">
                   Net Refund to Patient ({policyCalculation.refundPercent}%)
                 </p>
                 <p className="text-base font-black font-mono text-emerald-400 mt-0.5">
@@ -286,17 +286,17 @@ export default function CancellationModal({
 
           {/* Reschedule Suggestion to Waive Deductions */}
           {onSwitchToReschedule && (
-            <div className="p-3.5 rounded-2xl bg-teal-50 border border-teal-200 flex items-center justify-between gap-3">
+            <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-between gap-3">
               <div className="text-xs">
-                <p className="font-bold text-teal-900">Want to waive all cancellation cuts?</p>
-                <p className="text-[11px] text-teal-700">
+                <p className="font-bold text-blue-900">Want to waive all cancellation cuts?</p>
+                <p className="text-[11px] text-blue-700">
                   Reschedule within the same specialty with <strong>100% penalty waiver</strong>.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={onSwitchToReschedule}
-                className="shrink-0 px-3 py-1.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1"
+                className="shrink-0 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1"
               >
                 <span>Reschedule</span>
                 <ArrowRight className="w-3.5 h-3.5" />

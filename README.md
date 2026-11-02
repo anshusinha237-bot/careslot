@@ -3,7 +3,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16.4.3-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.3.0-blue?style=for-the-badge&logo=react)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/Academic_Project-CSE_2025--2026-teal?style=for-the-badge)](#)
+[![License](https://img.shields.io/badge/Academic_Project-CSE_2025--2026-blue?style=for-the-badge)](#)
 
 A full-stack, responsive Out-Patient Department (OPD) and multi-specialty clinic management platform built to eradicate patient waiting room congestion, eliminate double-booking concurrency bugs, and provide live visibility into doctor availability, emergency surgical delays, and digital queue tokens.
 

@@ -179,12 +179,12 @@ export default function AdminDashboardPage() {
         <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
           <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
             {/* Admin OTP Gate Header */}
-            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-900 text-white p-6 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-teal-500/20 backdrop-blur-xs flex items-center justify-center mx-auto mb-3 border border-teal-400/30">
-                <Shield className="w-6 h-6 text-teal-300" />
+            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 text-white p-6 text-center">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/20 backdrop-blur-xs flex items-center justify-center mx-auto mb-3 border border-blue-400/30">
+                <Shield className="w-6 h-6 text-blue-300" />
               </div>
               <h1 className="text-xl font-bold">Admin Portal OTP Gate</h1>
-              <p className="text-xs text-teal-200/80 mt-1">
+              <p className="text-xs text-blue-200/80 mt-1">
                 Password Login Disabled • Two-Factor OTP Required
               </p>
             </div>
@@ -202,19 +202,19 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* OTP Status Chip */}
-              <div className="p-3.5 rounded-2xl bg-teal-50 border border-teal-200 text-xs flex items-center justify-between">
+              <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-xs flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] text-teal-700 font-bold uppercase tracking-wider">
+                  <p className="text-[10px] text-blue-700 font-bold uppercase tracking-wider">
                     Admin Verification OTP:
                   </p>
-                  <p className="font-mono font-black text-teal-900 text-lg tracking-widest mt-0.5">
+                  <p className="font-mono font-black text-blue-900 text-lg tracking-widest mt-0.5">
                     {adminOtpGenerated}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setAdminOtpInput(adminOtpGenerated)}
-                  className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1"
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-2xs transition-colors flex items-center gap-1"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Fill OTP</span>
@@ -250,7 +250,7 @@ export default function AdminDashboardPage() {
                       placeholder="Enter 6-Digit OTP (e.g. 482910)"
                       value={adminOtpInput}
                       onChange={(e) => setAdminOtpInput(e.target.value.replace(/\D/g, ""))}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-teal-500 bg-teal-50/10 text-slate-900 font-mono text-base tracking-widest font-bold focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-blue-500 bg-blue-50/10 text-slate-900 font-mono text-base tracking-widest font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                       autoFocus
                     />
@@ -261,7 +261,7 @@ export default function AdminDashboardPage() {
                   type="submit"
                   className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2"
                 >
-                  <Shield className="w-4 h-4 text-teal-400" />
+                  <Shield className="w-4 h-4 text-blue-400" />
                   <span>Verify OTP &amp; Unlock Admin Panel</span>
                 </button>
 
@@ -292,7 +292,7 @@ export default function AdminDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-slate-900 text-teal-400 flex items-center justify-center font-bold">
+              <div className="w-12 h-12 rounded-xl bg-slate-900 text-blue-400 flex items-center justify-center font-bold">
                 <Shield className="w-6 h-6" />
               </div>
               <div>
@@ -300,7 +300,7 @@ export default function AdminDashboardPage() {
                   <span className="text-xs font-bold text-slate-800 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                     Administrator Center
                   </span>
-                  <span className="text-xs text-teal-600 font-bold">Role: SuperAdmin</span>
+                  <span className="text-xs text-blue-600 font-bold">Role: SuperAdmin</span>
                   <span className="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                     <span>OTP-Verified (Password Disabled)</span>
@@ -325,7 +325,7 @@ export default function AdminDashboardPage() {
                 onClick={handleExportCSV}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors shadow-xs"
               >
-                <Download className="w-4 h-4 text-teal-400" />
+                <Download className="w-4 h-4 text-blue-400" />
                 <span>Export Daily CSV (TC-17)</span>
               </button>
             </div>
@@ -348,7 +348,7 @@ export default function AdminDashboardPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? "bg-teal-600 text-white shadow-xs"
+                      ? "bg-blue-600 text-white shadow-xs"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
@@ -390,7 +390,7 @@ export default function AdminDashboardPage() {
               <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
                 <span className="text-[10px] font-bold uppercase text-slate-400 block">Total Doctors</span>
                 <span className="text-2xl font-black text-slate-900 mt-1 block">{doctors.length}</span>
-                <span className="text-[10px] text-teal-600 font-semibold">Active in hospital</span>
+                <span className="text-[10px] text-blue-600 font-semibold">Active in hospital</span>
               </div>
 
               <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
@@ -398,7 +398,7 @@ export default function AdminDashboardPage() {
                 <span className="text-2xl font-black text-slate-900 mt-1 block">
                   {departments.length}
                 </span>
-                <span className="text-[10px] text-teal-600 font-semibold">Specialty wings</span>
+                <span className="text-[10px] text-blue-600 font-semibold">Specialty wings</span>
               </div>
 
               <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
@@ -421,7 +421,7 @@ export default function AdminDashboardPage() {
 
               <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
                 <span className="text-[10px] font-bold uppercase text-slate-400 block">Avg Wait Time</span>
-                <span className="text-2xl font-black text-teal-700 mt-1 block">18 Mins</span>
+                <span className="text-2xl font-black text-blue-700 mt-1 block">18 Mins</span>
                 <span className="text-[10px] text-emerald-600 font-semibold">Down from 62 mins</span>
               </div>
 
@@ -437,7 +437,7 @@ export default function AdminDashboardPage() {
             {/* Peak OPD Hours Visualizer */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
               <h3 className="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-teal-600" />
+                <Clock className="w-4 h-4 text-blue-600" />
                 Peak OPD Hourly Appointment Distribution
               </h3>
               <p className="text-xs text-slate-500 mb-6">
@@ -455,11 +455,11 @@ export default function AdminDashboardPage() {
                   <div key={hour.time}>
                     <div className="flex justify-between font-bold text-slate-700 mb-1">
                       <span>{hour.time}</span>
-                      <span className="text-teal-700">{hour.count}</span>
+                      <span className="text-blue-700">{hour.count}</span>
                     </div>
                     <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
                       <div
-                        className="bg-gradient-to-r from-teal-500 to-emerald-500 h-full rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 h-full rounded-full transition-all duration-500"
                         style={{ width: `${hour.percentage}%` }}
                       ></div>
                     </div>
@@ -486,7 +486,7 @@ export default function AdminDashboardPage() {
                   >
                     <div>
                       <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="font-bold text-teal-700">{d.opd_room}</span>
+                        <span className="font-bold text-blue-700">{d.opd_room}</span>
                         <span
                           className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
                             d.current_status === "Available"
@@ -528,7 +528,7 @@ export default function AdminDashboardPage() {
               </div>
               <button
                 onClick={() => setShowAddDoctorModal(true)}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-xs transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Doctor (TC-15)</span>
@@ -556,7 +556,7 @@ export default function AdminDashboardPage() {
                           <p className="font-bold text-slate-900">{doc.full_name}</p>
                           <p className="text-[10px] text-slate-500">{doc.email}</p>
                         </td>
-                        <td className="py-3 px-4 font-semibold text-teal-700">{doc.dept_name}</td>
+                        <td className="py-3 px-4 font-semibold text-blue-700">{doc.dept_name}</td>
                         <td className="py-3 px-4 font-mono">{doc.opd_room}</td>
                         <td className="py-3 px-4 font-bold text-slate-900">
                           ₹{doc.consultation_fee.toFixed(0)}
@@ -599,7 +599,7 @@ export default function AdminDashboardPage() {
               </div>
               <button
                 onClick={() => setShowAddDeptModal(true)}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-xs transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Department (TC-14)</span>
@@ -616,7 +616,7 @@ export default function AdminDashboardPage() {
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                           {dept.floor}
                         </span>
                         <span className="text-xs text-slate-400">ID: #{dept.dept_id}</span>
@@ -656,7 +656,7 @@ export default function AdminDashboardPage() {
               </div>
               <button
                 onClick={handleExportCSV}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Export CSV (TC-17)</span>
@@ -691,7 +691,7 @@ export default function AdminDashboardPage() {
                         </td>
                         <td className="py-3 px-4 font-medium text-slate-800">
                           {a.doctor_name}
-                          <span className="block text-[10px] text-teal-600">{a.dept_name}</span>
+                          <span className="block text-[10px] text-blue-600">{a.dept_name}</span>
                         </td>
                         <td className="py-3 px-4 text-slate-600">
                           {a.appointment_date} <br />
@@ -742,7 +742,7 @@ export default function AdminDashboardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-                <div className="flex items-center gap-2 text-teal-700 font-bold text-xs uppercase">
+                <div className="flex items-center gap-2 text-blue-700 font-bold text-xs uppercase">
                   <KeyRound className="w-4 h-4" />
                   <span>TC-31: Admin OTP 2FA</span>
                 </div>
@@ -756,7 +756,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-                <div className="flex items-center gap-2 text-teal-700 font-bold text-xs uppercase">
+                <div className="flex items-center gap-2 text-blue-700 font-bold text-xs uppercase">
                   <Shield className="w-4 h-4" />
                   <span>TC-18: SQL Injection Defense</span>
                 </div>
@@ -770,7 +770,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-                <div className="flex items-center gap-2 text-teal-700 font-bold text-xs uppercase">
+                <div className="flex items-center gap-2 text-blue-700 font-bold text-xs uppercase">
                   <Lock className="w-4 h-4" />
                   <span>TC-19: XSS Payload Escaping</span>
                 </div>
@@ -784,7 +784,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-                <div className="flex items-center gap-2 text-teal-700 font-bold text-xs uppercase">
+                <div className="flex items-center gap-2 text-blue-700 font-bold text-xs uppercase">
                   <Activity className="w-4 h-4" />
                   <span>TC-09: Slot Concurrency Lock</span>
                 </div>
@@ -816,7 +816,7 @@ export default function AdminDashboardPage() {
                   placeholder="e.g. Dr. Siddharth Sen"
                   value={newDocName}
                   onChange={(e) => setNewDocName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -828,7 +828,7 @@ export default function AdminDashboardPage() {
                   placeholder="e.g. siddharth.sen@careslot.com"
                   value={newDocEmail}
                   onChange={(e) => setNewDocEmail(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -838,7 +838,7 @@ export default function AdminDashboardPage() {
                 <select
                   value={newDocDeptId}
                   onChange={(e) => setNewDocDeptId(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {departments.map((d) => (
                     <option key={d.dept_id} value={d.dept_id}>
@@ -855,7 +855,7 @@ export default function AdminDashboardPage() {
                     type="text"
                     value={newDocRoom}
                     onChange={(e) => setNewDocRoom(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -864,7 +864,7 @@ export default function AdminDashboardPage() {
                     type="number"
                     value={newDocFee}
                     onChange={(e) => setNewDocFee(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -879,7 +879,7 @@ export default function AdminDashboardPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold"
+                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold"
                 >
                   Enroll Doctor
                 </button>
@@ -904,7 +904,7 @@ export default function AdminDashboardPage() {
                   placeholder="e.g. Pulmonology & Chest Medicine"
                   value={newDeptName}
                   onChange={(e) => setNewDeptName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -916,7 +916,7 @@ export default function AdminDashboardPage() {
                   placeholder="e.g. Block C - 3rd Floor"
                   value={newDeptFloor}
                   onChange={(e) => setNewDeptFloor(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -927,7 +927,7 @@ export default function AdminDashboardPage() {
                   placeholder="Clinical diagnostic scope, ventilators, allergy services..."
                   value={newDeptDesc}
                   onChange={(e) => setNewDeptDesc(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -941,7 +941,7 @@ export default function AdminDashboardPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold"
+                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold"
                 >
                   Create Department
                 </button>

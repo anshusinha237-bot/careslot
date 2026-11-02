@@ -68,28 +68,28 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 selection:bg-teal-600 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-slate-50 selection:bg-blue-600 selection:text-white">
       <Navbar onOpenSymptomChecker={() => setIsSymptomCheckerOpen(true)} />
 
       {/* Hero Section with Ambient Glow */}
       <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-slate-200/80 bg-white">
         {/* Soft Background Mesh Glows */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-teal-400/15 via-emerald-300/15 to-sky-400/15 blur-3xl rounded-full pointer-events-none -z-10"></div>
-        <div className="absolute -bottom-10 right-0 w-[500px] h-[300px] bg-gradient-to-bl from-teal-300/10 via-purple-300/10 to-transparent blur-3xl rounded-full pointer-events-none -z-10"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-blue-400/15 via-indigo-300/15 to-sky-400/15 blur-3xl rounded-full pointer-events-none -z-10"></div>
+        <div className="absolute -bottom-10 right-0 w-[500px] h-[300px] bg-gradient-to-bl from-blue-300/10 via-purple-300/10 to-transparent blur-3xl rounded-full pointer-events-none -z-10"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Column: Headlines & Search */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
               {/* Feature Pill */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/80 text-teal-800 text-xs font-bold shadow-2xs">
-                <span className="flex h-2 w-2 rounded-full bg-teal-500 animate-ping"></span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 text-blue-800 text-xs font-bold shadow-2xs">
+                <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-ping"></span>
                 <span className="tracking-wide">LIVE OPD DOCTOR AVAILABILITY &amp; QUEUE</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
                 Zero Waiting Rooms. <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-teal-500 to-emerald-500">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600">
                   Live Doctor Availability.
                 </span>
               </h1>
@@ -100,7 +100,7 @@ export default function HomePage() {
 
               {/* Elevated Search Bar */}
               <div className="pt-2 max-w-xl mx-auto lg:mx-0">
-                <div className="bg-white/95 backdrop-blur-md p-2 rounded-2xl shadow-xl shadow-slate-200/70 border border-slate-200/90 flex flex-col sm:flex-row gap-2 transition-all focus-within:ring-2 focus-within:ring-teal-500 focus-within:border-teal-500">
+                <div className="bg-white/95 backdrop-blur-md p-2 rounded-2xl shadow-xl shadow-slate-200/70 border border-slate-200/90 flex flex-col sm:flex-row gap-2 transition-all focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
                   <div className="relative flex-1 flex items-center">
                     <Search className="w-5 h-5 absolute left-3.5 text-slate-400" />
                     <input
@@ -121,7 +121,7 @@ export default function HomePage() {
                     </button>
                     <Link
                       href="/doctors"
-                      className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-xs font-bold shadow-md shadow-teal-600/25 transition-all whitespace-nowrap active:scale-95"
+                      className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-blue-600/25 transition-all whitespace-nowrap active:scale-95"
                     >
                       <span>Find Doctors</span>
                       <ArrowRight className="w-4 h-4" />
@@ -139,7 +139,7 @@ export default function HomePage() {
                         setSelectedDept(spec);
                         setSearchQuery("");
                       }}
-                      className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 font-medium transition-colors border border-slate-200/60"
+                      className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-600 font-medium transition-colors border border-slate-200/60"
                     >
                       {spec}
                     </button>
@@ -150,7 +150,7 @@ export default function HomePage() {
               {/* Research Metrics Pill Strip */}
               <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl mx-auto lg:mx-0">
                 <div className="bg-slate-50/80 backdrop-blur-xs p-3 rounded-2xl border border-slate-200/80">
-                  <div className="flex items-center gap-1 text-teal-600 font-black text-lg">
+                  <div className="flex items-center gap-1 text-blue-600 font-black text-lg">
                     <TrendingDown className="w-4 h-4" />
                     <span>&gt; 60%</span>
                   </div>
@@ -159,7 +159,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="bg-slate-50/80 backdrop-blur-xs p-3 rounded-2xl border border-slate-200/80">
-                  <div className="flex items-center gap-1 text-emerald-600 font-black text-lg">
+                  <div className="flex items-center gap-1 text-blue-600 font-black text-lg">
                     <Zap className="w-4 h-4" />
                     <span>142 ms</span>
                   </div>
@@ -177,7 +177,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="bg-slate-50/80 backdrop-blur-xs p-3 rounded-2xl border border-slate-200/80">
-                  <div className="flex items-center gap-1 text-blue-600 font-black text-lg">
+                  <div className="flex items-center gap-1 text-sky-600 font-black text-lg">
                     <Users className="w-4 h-4" />
                     <span>{availableNowCount} Doctors</span>
                   </div>
@@ -189,35 +189,35 @@ export default function HomePage() {
 
             {/* Right Column: Live OPD Station Showcase Card */}
             <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md bg-white rounded-3xl p-6 shadow-2xl shadow-teal-900/10 border border-slate-200/90 overflow-hidden">
+              <div className="relative mx-auto max-w-md bg-white rounded-3xl p-6 shadow-2xl shadow-blue-900/10 border border-slate-200/90 overflow-hidden">
                 {/* Station Header */}
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
+                    <div className="w-3 h-3 rounded-full bg-blue-500 animate-ping"></div>
                     <span className="text-xs font-black uppercase tracking-wider text-slate-900 font-mono">
                       LIVE STATION: ROOM 102
                     </span>
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                     Cath Lab Wing
                   </span>
                 </div>
 
                 {/* Doctor In Consultation */}
                 <div className="py-4 flex items-center gap-3.5">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-400 text-white font-black text-xl flex items-center justify-center shadow-md shadow-teal-500/25">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-500 text-white font-black text-xl flex items-center justify-center shadow-md shadow-blue-500/25">
                     PS
                   </div>
                   <div>
                     <h4 className="font-black text-slate-900 text-lg">Dr. Priya Sharma</h4>
-                    <p className="text-xs font-bold text-teal-600">Chief Interventional Cardiologist</p>
+                    <p className="text-xs font-bold text-blue-600">Chief Interventional Cardiologist</p>
                     <p className="text-[11px] text-slate-400 mt-0.5">MD, DM (Cardiology), FACC • 14 Yrs Exp</p>
                   </div>
                 </div>
 
                 {/* Big Live Token Board Widget */}
                 <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-4 text-center my-2 shadow-inner">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-teal-400 block">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-blue-400 block">
                     NOW CONSULTING IN ROOM
                   </span>
                   <span className="text-4xl font-black font-mono tracking-tight text-amber-300 block my-1">
@@ -225,7 +225,7 @@ export default function HomePage() {
                   </span>
                   <div className="flex items-center justify-between text-xs text-slate-300 pt-2 border-t border-slate-700/80">
                     <span>Next Token:</span>
-                    <span className="font-mono font-bold text-teal-400">Token #105 (Ready)</span>
+                    <span className="font-mono font-bold text-blue-400">Token #105 (Ready)</span>
                   </div>
                 </div>
 
@@ -236,7 +236,7 @@ export default function HomePage() {
                     <span className="font-bold text-slate-900">12 of 18 Consultations</span>
                   </div>
                   <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                    <div className="bg-gradient-to-r from-teal-500 to-emerald-500 h-full rounded-full w-[67%] transition-all"></div>
+                    <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full w-[67%] transition-all"></div>
                   </div>
                 </div>
 
@@ -245,7 +245,7 @@ export default function HomePage() {
                   <span className="text-slate-400 text-[11px]">Sync Rate: &lt;142ms</span>
                   <Link
                     href="/queue"
-                    className="text-teal-600 hover:text-teal-700 font-bold flex items-center gap-1 hover:underline"
+                    className="text-blue-600 hover:text-blue-700 font-bold flex items-center gap-1 hover:underline"
                   >
                     <span>View All 8 Rooms</span>
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -261,7 +261,7 @@ export default function HomePage() {
       <section className="py-14 bg-slate-50/80 border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-xl mx-auto mb-10">
-            <span className="text-xs font-bold text-teal-600 uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-200/60">
+            <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full border border-blue-200/60">
               Specialized Medical Wings
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">
@@ -285,8 +285,8 @@ export default function HomePage() {
                   }}
                   className={`p-5 rounded-3xl border text-left transition-all duration-300 flex flex-col justify-between group ${
                     isSelected
-                      ? "bg-teal-600 text-white border-teal-600 shadow-lg shadow-teal-600/20 -translate-y-1"
-                      : "bg-white text-slate-800 border-slate-200/90 hover:border-teal-400 hover:shadow-md hover:-translate-y-0.5"
+                      ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/20 -translate-y-1"
+                      : "bg-white text-slate-800 border-slate-200/90 hover:border-blue-400 hover:shadow-md hover:-translate-y-0.5"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -294,7 +294,7 @@ export default function HomePage() {
                       className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 ${
                         isSelected
                           ? "bg-white/20 text-white"
-                          : "bg-teal-50 text-teal-700"
+                          : "bg-blue-50 text-blue-700"
                       }`}
                     >
                       <Icon className="w-5 h-5" />
@@ -313,14 +313,14 @@ export default function HomePage() {
                   <div>
                     <h3
                       className={`font-bold text-sm ${
-                        isSelected ? "text-white" : "text-slate-900 group-hover:text-teal-600"
+                        isSelected ? "text-white" : "text-slate-900 group-hover:text-blue-600"
                       }`}
                     >
                       {dept.dept_name}
                     </h3>
                     <p
                       className={`text-[11px] line-clamp-2 mt-1 leading-relaxed ${
-                        isSelected ? "text-teal-100" : "text-slate-500"
+                        isSelected ? "text-blue-100" : "text-slate-500"
                       }`}
                     >
                       {dept.description}
@@ -338,7 +338,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
             <div>
-              <span className="text-xs font-bold text-teal-600 uppercase tracking-wider">
+              <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
                 Physicians On Duty
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
@@ -352,7 +352,7 @@ export default function HomePage() {
             {selectedDept !== "All" && (
               <button
                 onClick={() => setSelectedDept("All")}
-                className="text-xs font-bold text-teal-600 hover:text-teal-700 self-start sm:self-auto hover:underline"
+                className="text-xs font-bold text-blue-600 hover:text-blue-700 self-start sm:self-auto hover:underline"
               >
                 Clear Department Filter (Show All)
               </button>
@@ -386,7 +386,7 @@ export default function HomePage() {
       <section className="py-16 bg-slate-50/80 border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-xs font-bold text-teal-600 uppercase tracking-wider bg-teal-50 px-3 py-1 rounded-full border border-teal-200/60">
+            <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full border border-blue-200/60">
               Zero Confusion
             </span>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">
@@ -399,7 +399,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white p-7 rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow relative">
-              <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-black text-lg mb-4 border border-teal-100">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center font-black text-lg mb-4 border border-blue-100">
                 1
               </div>
               <h3 className="font-bold text-slate-900 text-base mb-2">Check Live Availability</h3>
@@ -409,7 +409,7 @@ export default function HomePage() {
             </div>
 
             <div className="bg-white p-7 rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow relative">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-black text-lg mb-4 border border-emerald-100">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-lg mb-4 border border-indigo-100">
                 2
               </div>
               <h3 className="font-bold text-slate-900 text-base mb-2">Book Slot &amp; Get Digital Token</h3>
@@ -419,7 +419,7 @@ export default function HomePage() {
             </div>
 
             <div className="bg-white p-7 rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow relative">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-lg mb-4 border border-indigo-100">
+              <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-700 flex items-center justify-center font-black text-lg mb-4 border border-sky-100">
                 3
               </div>
               <h3 className="font-bold text-slate-900 text-base mb-2">Arrive Just-In-Time</h3>

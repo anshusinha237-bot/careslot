@@ -12,7 +12,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full scroll-smooth">
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900 antialiased selection:bg-teal-600 selection:text-white">
+      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900 antialiased selection:bg-blue-600 selection:text-white">
         <AppProvider>
           <LiveTicker />
           <div className="flex-1 flex flex-col">{children}</div>

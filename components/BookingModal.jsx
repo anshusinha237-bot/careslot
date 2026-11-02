@@ -144,24 +144,24 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Top Header */}
-        <div className="bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-700 text-white p-5 flex items-start justify-between">
+        <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white p-5 flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="bg-white/20 text-teal-100 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="bg-white/20 text-blue-100 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                 {step === 1 ? "Step 1 of 2: Appointment Details" : "Step 2 of 2: Payment & Token Allocation"}
               </span>
-              <span className="text-teal-200 text-xs flex items-center gap-1 font-medium">
+              <span className="text-blue-200 text-xs flex items-center gap-1 font-medium">
                 <Lock className="w-3 h-3" /> 256-Bit SSL Secured
               </span>
             </div>
             <h2 className="text-xl font-bold">{doctor.full_name}</h2>
-            <p className="text-xs text-teal-100 mt-0.5">
+            <p className="text-xs text-blue-100 mt-0.5">
               {doctor.dept_name} • {doctor.opd_room} • Consultation Fee: <strong>₹{doctor.consultation_fee.toFixed(0)}</strong>
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-teal-200 hover:text-white p-1 rounded-xl hover:bg-white/10 transition-colors"
+            className="text-blue-200 hover:text-white p-1 rounded-xl hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -171,18 +171,18 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
         <div className="grid grid-cols-2 bg-slate-100 text-xs font-bold border-b border-slate-200">
           <div
             className={`py-2 px-4 text-center flex items-center justify-center gap-2 ${
-              step === 1 ? "bg-teal-50 text-teal-800 border-b-2 border-teal-600 font-extrabold" : "text-slate-500"
+              step === 1 ? "bg-blue-50 text-blue-800 border-b-2 border-blue-600 font-extrabold" : "text-slate-500"
             }`}
           >
-            <span className="w-5 h-5 rounded-full bg-teal-600 text-white text-[11px] flex items-center justify-center">1</span>
+            <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] flex items-center justify-center">1</span>
             <span>Slot &amp; Patient Details</span>
           </div>
           <div
             className={`py-2 px-4 text-center flex items-center justify-center gap-2 ${
-              step === 2 ? "bg-teal-50 text-teal-800 border-b-2 border-teal-600 font-extrabold" : "text-slate-400"
+              step === 2 ? "bg-blue-50 text-blue-800 border-b-2 border-blue-600 font-extrabold" : "text-slate-400"
             }`}
           >
-            <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center ${step === 2 ? "bg-teal-600 text-white" : "bg-slate-300 text-slate-600"}`}>2</span>
+            <span className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center ${step === 2 ? "bg-blue-600 text-white" : "bg-slate-300 text-slate-600"}`}>2</span>
             <span>Payment Options</span>
           </div>
         </div>
@@ -204,7 +204,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
             {/* 1. Date Picker */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-teal-600" />
+                <Calendar className="w-3.5 h-3.5 text-blue-600" />
                 1. Select Appointment Date:
               </label>
               <input
@@ -212,7 +212,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                 min={todayStr}
                 value={selectedDate}
                 onChange={handleDateChange}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm font-medium text-slate-800 bg-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium text-slate-800 bg-white"
               />
               <p className="text-[11px] text-slate-500 mt-1">
                 Doctor consultation shift: {doctor.shift_hours}.
@@ -223,7 +223,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-teal-600" />
+                  <Clock className="w-3.5 h-3.5 text-blue-600" />
                   2. Select Available Time Slot:
                 </label>
                 <span className="text-[11px] text-slate-500">
@@ -249,8 +249,8 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                         isBooked
                           ? "bg-slate-200/80 text-slate-400 cursor-not-allowed line-through"
                           : isSelected
-                          ? "bg-teal-600 text-white shadow-sm ring-2 ring-teal-600"
-                          : "bg-white text-slate-700 border border-slate-200 hover:border-teal-500 hover:bg-teal-50/50"
+                          ? "bg-blue-600 text-white shadow-sm ring-2 ring-blue-600"
+                          : "bg-white text-slate-700 border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50"
                       }`}
                     >
                       <span>{slot}</span>
@@ -266,7 +266,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
             {/* 3. Patient Contact & Details */}
             <div className="space-y-3 pt-2 border-t border-slate-100">
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-teal-600" />
+                <User className="w-3.5 h-3.5 text-blue-600" />
                 3. Patient Information:
               </label>
 
@@ -277,7 +277,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                     placeholder="Patient Full Legal Name *"
                     value={patientName}
                     onChange={(e) => setPatientName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                     required
                   />
                 </div>
@@ -287,7 +287,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                     placeholder="Mobile Phone Number *"
                     value={patientPhone}
                     onChange={(e) => setPatientPhone(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                     required
                   />
                 </div>
@@ -299,7 +299,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                   placeholder="Email Address (for Digital Slip &amp; Reminders)"
                   value={patientEmail}
                   onChange={(e) => setPatientEmail(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                 />
               </div>
 
@@ -309,7 +309,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                   rows={2}
                   value={symptoms}
                   onChange={(e) => setSymptoms(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -326,7 +326,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
 
               <button
                 type="submit"
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition-all active:scale-95"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all active:scale-95"
               >
                 <span>Proceed to Payment (₹{doctor.consultation_fee.toFixed(0)})</span>
                 <ArrowRight className="w-4 h-4" />
@@ -339,10 +339,10 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
         {step === 2 && (
           <div className="p-6 space-y-5">
             {/* Order / Fee Summary Card */}
-            <div className="bg-gradient-to-br from-slate-50 to-teal-50/40 p-4 rounded-2xl border border-slate-200 text-xs space-y-2">
+            <div className="bg-gradient-to-br from-slate-50 to-blue-50/40 p-4 rounded-2xl border border-slate-200 text-xs space-y-2">
               <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                 <span className="font-bold text-slate-800">OPD Consultation Summary:</span>
-                <span className="font-bold text-teal-700">{doctor.opd_room}</span>
+                <span className="font-bold text-blue-700">{doctor.opd_room}</span>
               </div>
               <div className="grid grid-cols-2 gap-2 text-slate-600 text-[11px]">
                 <div>
@@ -359,7 +359,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                 </div>
                 <div>
                   <span className="text-slate-400 block">Total Payable</span>
-                  <span className="font-black text-teal-800 text-sm">₹{doctor.consultation_fee.toFixed(0)}</span>
+                  <span className="font-black text-blue-800 text-sm">₹{doctor.consultation_fee.toFixed(0)}</span>
                 </div>
               </div>
             </div>
@@ -367,7 +367,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
             {/* Select Payment Method Tabs */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <Wallet className="w-3.5 h-3.5 text-teal-600" />
+                <Wallet className="w-3.5 h-3.5 text-blue-600" />
                 Choose Payment Method:
               </label>
 
@@ -386,11 +386,11 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                       onClick={() => setPaymentMethod(item.id)}
                       className={`p-3 rounded-2xl border text-center flex flex-col items-center justify-center gap-1 transition-all ${
                         isActive
-                          ? "bg-teal-50 border-teal-600 text-teal-800 font-bold shadow-xs ring-1 ring-teal-600"
+                          ? "bg-blue-50 border-blue-600 text-blue-800 font-bold shadow-xs ring-1 ring-blue-600"
                           : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
                       }`}
                     >
-                      <Icon className={`w-5 h-5 ${isActive ? "text-teal-600" : "text-slate-500"}`} />
+                      <Icon className={`w-5 h-5 ${isActive ? "text-blue-600" : "text-slate-500"}`} />
                       <span className="text-xs">{item.label}</span>
                     </button>
                   );
@@ -405,9 +405,9 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-slate-800">Scan &amp; Pay via UPI Apps</span>
-                        <span className="text-[10px] text-teal-700 bg-teal-100 px-2 py-0.5 rounded font-bold">GPay / PhonePe / Paytm</span>
+                        <span className="text-[10px] text-blue-700 bg-blue-100 px-2 py-0.5 rounded font-bold">GPay / PhonePe / Paytm</span>
                       </div>
-                      <span className="font-bold text-teal-700">₹{doctor.consultation_fee.toFixed(0)}</span>
+                      <span className="font-bold text-blue-700">₹{doctor.consultation_fee.toFixed(0)}</span>
                     </div>
 
                     <div className="flex items-center gap-4 bg-white p-3 rounded-xl border border-slate-200">
@@ -434,7 +434,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                       </div>
                       <div className="space-y-1">
                         <p className="font-bold text-slate-800">CareSlot Healthcare VPA:</p>
-                        <p className="font-mono text-[11px] text-teal-700">careslot.opd@hdfcbank</p>
+                        <p className="font-mono text-[11px] text-blue-700">careslot.opd@hdfcbank</p>
                         <p className="text-[10px] text-slate-400">Scan using Google Pay, PhonePe, or BHIM</p>
                       </div>
                     </div>
@@ -448,7 +448,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                         value={upiId}
                         onChange={(e) => setUpiId(e.target.value)}
                         placeholder="username@okhdfcbank"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-medium focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -464,7 +464,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                         value={cardNumber}
                         onChange={(e) => setCardNumber(e.target.value)}
                         placeholder="Card Number (e.g. 4532 8921 0021 8821)"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-2">
@@ -473,7 +473,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                         value={cardExpiry}
                         onChange={(e) => setCardExpiry(e.target.value)}
                         placeholder="MM/YY"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <input
                         type="password"
@@ -481,11 +481,11 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                         onChange={(e) => setCardCvv(e.target.value)}
                         placeholder="CVV"
                         maxLength={4}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                      <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
                       <span>Supports Visa, MasterCard, RuPay &amp; Maestro</span>
                     </div>
                   </div>
@@ -503,12 +503,12 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                           onClick={() => setSelectedBank(bank)}
                           className={`p-2 rounded-xl border text-left text-xs font-semibold flex items-center justify-between ${
                             selectedBank === bank
-                              ? "bg-teal-50 border-teal-600 text-teal-800"
+                              ? "bg-blue-50 border-blue-600 text-blue-800"
                               : "bg-white border-slate-200 text-slate-700"
                           }`}
                         >
                           <span>{bank}</span>
-                          {selectedBank === bank && <Check className="w-3.5 h-3.5 text-teal-600" />}
+                          {selectedBank === bank && <Check className="w-3.5 h-3.5 text-blue-600" />}
                         </button>
                       ))}
                     </div>
@@ -520,8 +520,8 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
             {/* Security Guarantee & Cancellation Policy */}
             <div className="space-y-1.5 pt-1">
               <div className="flex items-center justify-between text-[11px] text-slate-500">
-                <span className="flex items-center gap-1 text-teal-700 font-semibold">
-                  <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+                <span className="flex items-center gap-1 text-blue-700 font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
                   <span>Free Rescheduling Anytime • Transparent Refund Policy</span>
                 </span>
                 <span>Hospital Reg #DL-MED-2026-904</span>
@@ -546,7 +546,7 @@ export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
                 type="button"
                 onClick={handleConfirmAndPay}
                 disabled={isSubmitting}
-                className="flex-1 sm:flex-none sm:px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition-all flex items-center justify-center gap-2 active:scale-95"
+                className="flex-1 sm:flex-none sm:px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all flex items-center justify-center gap-2 active:scale-95"
               >
                 {isSubmitting ? (
                   <span>Processing Payment &amp; Lock...</span>

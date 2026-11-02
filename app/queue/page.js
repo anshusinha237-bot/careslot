@@ -82,13 +82,13 @@ export default function LiveQueueBoardPage() {
       <div className="bg-slate-900 border-b border-slate-800 py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400">
+            <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
               <Tv className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span className="text-xs font-bold text-teal-400 tracking-wider uppercase font-mono">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-400 animate-ping"></span>
+                <span className="text-xs font-bold text-blue-400 tracking-wider uppercase font-mono">
                   LIVE HOSPITAL CONCOURSE OPD BROADCAST
                 </span>
               </div>
@@ -101,11 +101,11 @@ export default function LiveQueueBoardPage() {
           {/* Live Clock / Shift Indicator */}
           <div className="flex items-center gap-4 bg-slate-800/80 px-4 py-2.5 rounded-xl border border-slate-700 text-xs">
             <div className="flex items-center gap-2 text-slate-300">
-              <Clock className="w-4 h-4 text-teal-400" />
+              <Clock className="w-4 h-4 text-blue-400" />
               <span>OPD Active Hours: 08:30 AM – 06:30 PM</span>
             </div>
             <span className="text-slate-600">|</span>
-            <div className="flex items-center gap-1.5 text-emerald-400 font-bold font-mono">
+            <div className="flex items-center gap-1.5 text-blue-400 font-bold font-mono">
               <Activity className="w-4 h-4" />
               <span>SYNC 142MS</span>
             </div>
@@ -115,7 +115,7 @@ export default function LiveQueueBoardPage() {
 
       {/* Chime Announcement Bar */}
       {chimeMessage && (
-        <div className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white py-3 px-4 text-center font-bold text-sm tracking-wide shadow-lg animate-in slide-in-from-top-4 duration-200">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 text-center font-bold text-sm tracking-wide shadow-lg animate-in slide-in-from-top-4 duration-200">
           {chimeMessage}
         </div>
       )}
@@ -141,12 +141,12 @@ export default function LiveQueueBoardPage() {
                   placeholder="Enter Token # (e.g., 105)"
                   value={tokenSearch}
                   onChange={(e) => setTokenSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-teal-500 font-mono"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                 />
               </div>
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition-colors"
+                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-colors"
               >
                 Track Token
               </button>
@@ -163,17 +163,17 @@ export default function LiveQueueBoardPage() {
                     </span>
                   </div>
                 ) : (
-                  <div className="bg-teal-950/60 border-2 border-teal-500 rounded-xl p-4 text-white space-y-2">
+                  <div className="bg-blue-950/60 border-2 border-blue-500 rounded-xl p-4 text-white space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-teal-400 uppercase tracking-wider font-mono">
+                      <span className="text-xs font-bold text-blue-400 uppercase tracking-wider font-mono">
                         Live Tracking: Token #{patientLookupResult.appointment.token_number}
                       </span>
-                      <span className="text-xs bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded font-bold">
+                      <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-bold">
                         {patientLookupResult.waitEstimate}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-xs border-t border-teal-800/80">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-xs border-t border-blue-800/80">
                       <div>
                         <span className="text-slate-400 block text-[10px]">Patient</span>
                         <span className="font-bold text-white">
@@ -182,7 +182,7 @@ export default function LiveQueueBoardPage() {
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[10px]">OPD Doctor</span>
-                        <span className="font-bold text-teal-300">
+                        <span className="font-bold text-blue-300">
                           {patientLookupResult.doctor?.full_name}
                         </span>
                       </div>
@@ -200,7 +200,7 @@ export default function LiveQueueBoardPage() {
                       </div>
                     </div>
 
-                    <p className="text-xs text-teal-200 font-medium pt-1">
+                    <p className="text-xs text-blue-200 font-medium pt-1">
                       {patientLookupResult.statusDesc}
                     </p>
                   </div>
@@ -214,7 +214,7 @@ export default function LiveQueueBoardPage() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
               All Active OPD Consultation Rooms
             </h2>
             <span className="text-xs text-slate-400">
@@ -228,7 +228,7 @@ export default function LiveQueueBoardPage() {
                 key={doc.doctor_id}
                 className={`rounded-2xl border p-5 flex flex-col justify-between transition-all ${
                   doc.current_status === "Available"
-                    ? "bg-slate-900 border-slate-800 hover:border-teal-500/50"
+                    ? "bg-slate-900 border-slate-800 hover:border-blue-500/50"
                     : doc.current_status === "In-Surgery"
                     ? "bg-rose-950/30 border-rose-900/60"
                     : doc.current_status === "Busy"
@@ -239,13 +239,13 @@ export default function LiveQueueBoardPage() {
                 <div>
                   {/* Room & Status Header */}
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="font-mono text-xs font-bold text-teal-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">
+                    <span className="font-mono text-xs font-bold text-blue-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">
                       {doc.opd_room}
                     </span>
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         doc.current_status === "Available"
-                          ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                          ? "bg-blue-950 text-blue-300 border border-blue-800"
                           : doc.current_status === "In-Surgery"
                           ? "bg-rose-950 text-rose-300 border border-rose-800 animate-pulse"
                           : doc.current_status === "Busy"
@@ -258,7 +258,7 @@ export default function LiveQueueBoardPage() {
                   </div>
 
                   <h3 className="font-bold text-base text-white">{doc.full_name}</h3>
-                  <p className="text-xs text-teal-400 font-medium mb-4">{doc.dept_name}</p>
+                  <p className="text-xs text-blue-400 font-medium mb-4">{doc.dept_name}</p>
 
                   {/* Gigantic Token Display */}
                   <div className="bg-slate-950/90 rounded-xl p-4 border border-slate-800 text-center mb-3">
@@ -274,7 +274,7 @@ export default function LiveQueueBoardPage() {
                     </span>
                     <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800/80">
                       <span>Next in Queue:</span>
-                      <span className="font-mono font-bold text-teal-400">
+                      <span className="font-mono font-bold text-blue-400">
                         {doc.next_token ? `Token #${doc.next_token}` : "None"}
                       </span>
                     </div>
@@ -297,7 +297,7 @@ export default function LiveQueueBoardPage() {
                   <span className="text-slate-500">Shift: {doc.shift_hours}</span>
                   <button
                     onClick={() => handleSimulateChime(doc)}
-                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-teal-400 hover:text-white transition-colors"
+                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white transition-colors"
                     title="Simulate Queue Chime Speaker Announcement"
                   >
                     <Volume2 className="w-4 h-4" />

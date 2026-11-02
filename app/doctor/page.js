@@ -60,7 +60,7 @@ export default function DoctorDashboardPage() {
             <div className="pt-2 flex flex-col gap-2">
               <Link
                 href="/patient"
-                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition-colors"
+                className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md transition-colors"
               >
                 Return to Patient Portal
               </Link>
@@ -133,7 +133,7 @@ export default function DoctorDashboardPage() {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
             {/* Doctor Info */}
             <div className="flex items-center gap-4">
-              <div className="w-13 h-13 rounded-2xl bg-emerald-600 text-white font-bold text-lg flex items-center justify-center shadow-sm">
+              <div className="w-13 h-13 rounded-2xl bg-blue-600 text-white font-bold text-lg flex items-center justify-center shadow-sm">
                 {activeDoctor.full_name
                   .split(" ")
                   .filter((n) => !n.startsWith("Dr."))
@@ -143,7 +143,7 @@ export default function DoctorDashboardPage() {
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
+                  <span className="text-[11px] font-bold text-blue-800 uppercase tracking-wider bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-200">
                     Clinical Console
                   </span>
                   <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
@@ -317,7 +317,7 @@ export default function DoctorDashboardPage() {
                 <button
                   type="button"
                   onClick={() => callNextPatient(activeDoctor.doctor_id)}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors"
                 >
                   <Volume2 className="w-3.5 h-3.5" />
                   <span>Call Next Patient (Token #{activeDoctor.next_token})</span>
@@ -328,9 +328,9 @@ export default function DoctorDashboardPage() {
               {inProgressApp ? (
                 <div className="space-y-4">
                   {/* In-Room Patient Card */}
-                  <div className="flex items-start justify-between bg-emerald-50/70 p-4 rounded-2xl border border-emerald-200/80">
+                  <div className="flex items-start justify-between bg-blue-50/70 p-4 rounded-2xl border border-blue-200/80">
                     <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-800 block">
                         PATIENT CURRENTLY INSIDE CONSULTATION ROOM
                       </span>
                       <h3 className="text-xl font-bold text-slate-900 mt-1">
@@ -343,7 +343,7 @@ export default function DoctorDashboardPage() {
 
                     <div className="text-right">
                       <span className="text-[10px] uppercase font-bold text-slate-500 block">TOKEN</span>
-                      <span className="text-3xl font-black font-mono text-emerald-800">
+                      <span className="text-3xl font-black font-mono text-blue-800">
                         #{inProgressApp.token_number}
                       </span>
                     </div>
@@ -365,7 +365,7 @@ export default function DoctorDashboardPage() {
                       value={consultationNotes}
                       onChange={(e) => setConsultationNotes(e.target.value)}
                       placeholder="Enter clinical examination notes, vitals (BP/Pulse), and advised medication..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-medium"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white font-medium"
                     />
                     <div className="flex items-center justify-between gap-3 pt-1">
                       <button
@@ -377,14 +377,14 @@ export default function DoctorDashboardPage() {
                       <button
                         type="button"
                         onClick={() => handleFinishAndCallNext(inProgressApp.appointment_id)}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5"
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>Finish &amp; Call Next</span>
                       </button>
                     </div>
                     {prescriptionSaved && (
-                      <p className="text-xs text-emerald-600 font-bold flex items-center gap-1">
+                      <p className="text-xs text-blue-600 font-bold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Notes stored in patient digital health record.
                       </p>
                     )}
@@ -400,7 +400,7 @@ export default function DoctorDashboardPage() {
                   <button
                     type="button"
                     onClick={() => callNextPatient(activeDoctor.doctor_id)}
-                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
                   >
                     Call Next Token (#{activeDoctor.next_token})
                   </button>
@@ -415,7 +415,7 @@ export default function DoctorDashboardPage() {
           <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100">
-                <Clock className="w-4 h-4 text-emerald-600" />
+                <Clock className="w-4 h-4 text-blue-600" />
                 <h3 className="font-bold text-slate-900 text-sm">
                   Working Hours &amp; Interval
                 </h3>
@@ -428,7 +428,7 @@ export default function DoctorDashboardPage() {
                     type="text"
                     value={scheduleShiftHours}
                     onChange={(e) => setScheduleShiftHours(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   />
                 </div>
 
@@ -437,7 +437,7 @@ export default function DoctorDashboardPage() {
                   <select
                     value={consultationInterval}
                     onChange={(e) => setConsultationInterval(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   >
                     <option value="15 Minutes">15 Minutes per patient</option>
                     <option value="20 Minutes">20 Minutes per patient</option>
@@ -450,7 +450,7 @@ export default function DoctorDashboardPage() {
                   <input
                     type="number"
                     defaultValue={30}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   />
                 </div>
 
@@ -462,7 +462,7 @@ export default function DoctorDashboardPage() {
                 </button>
 
                 {scheduleNotice && (
-                  <p className="text-emerald-800 font-bold text-xs bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                  <p className="text-blue-800 font-bold text-xs bg-blue-50 p-2 rounded-lg border border-blue-200">
                     {scheduleNotice}
                   </p>
                 )}
@@ -488,7 +488,7 @@ export default function DoctorDashboardPage() {
         <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs">
           <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
             <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-              <Users className="w-4 h-4 text-emerald-600" />
+              <Users className="w-4 h-4 text-blue-600" />
               <span>Today&apos;s Full Schedule / Waiting Board (2026-10-31)</span>
             </h3>
             <span className="text-xs text-slate-500 font-medium">
@@ -516,7 +516,7 @@ export default function DoctorDashboardPage() {
                       #{app.token_number}
                     </td>
                     <td className="py-3 px-4 font-bold text-slate-900">{app.patient_name}</td>
-                    <td className="py-3 px-4 font-medium text-emerald-700 font-mono">{app.appointment_time}</td>
+                    <td className="py-3 px-4 font-medium text-blue-700 font-mono">{app.appointment_time}</td>
                     <td className="py-3 px-4 font-mono text-slate-600">{app.patient_phone}</td>
                     <td className="py-3 px-4 italic text-slate-500 max-w-[220px] truncate">
                       {app.symptoms}
@@ -529,7 +529,7 @@ export default function DoctorDashboardPage() {
                             : app.status === "confirmed"
                             ? "bg-blue-100 text-blue-800 border border-blue-200"
                             : app.status === "completed"
-                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                            ? "bg-blue-50 text-blue-700 border border-blue-200"
                             : "bg-slate-100 text-slate-600"
                         }`}
                       >
@@ -545,7 +545,7 @@ export default function DoctorDashboardPage() {
                         <button
                           type="button"
                           onClick={() => callNextPatient(activeDoctor.doctor_id)}
-                          className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg font-bold text-[11px] border border-emerald-200 transition-colors"
+                          className="px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg font-bold text-[11px] border border-blue-200 transition-colors"
                         >
                           Call In
                         </button>
@@ -554,14 +554,14 @@ export default function DoctorDashboardPage() {
                         <button
                           type="button"
                           onClick={() => completeConsultation(app.appointment_id)}
-                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[11px] shadow-2xs transition-colors"
+                          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-[11px] shadow-2xs transition-colors"
                         >
                           Finish
                         </button>
                       )}
                       {app.status === "completed" && (
                         <span className="text-[11px] text-slate-400 font-semibold flex items-center justify-end gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
                           <span>Finished</span>
                         </span>
                       )}

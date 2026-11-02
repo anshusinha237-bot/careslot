@@ -88,14 +88,14 @@ export default function RescheduleModal({
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="bg-gradient-to-r from-teal-700 to-teal-800 text-white p-6 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center border border-white/30">
-              <Calendar className="w-5 h-5 text-teal-200" />
+              <Calendar className="w-5 h-5 text-blue-200" />
             </div>
             <div>
               <h2 className="text-lg font-bold">Reschedule Appointment</h2>
-              <p className="text-xs text-teal-100">Same Department / Specialty Slot Transfer</p>
+              <p className="text-xs text-blue-100">Same Department / Specialty Slot Transfer</p>
             </div>
           </div>
           <button
@@ -115,8 +115,8 @@ export default function RescheduleModal({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-500">Department / Specialty:</span>
-              <span className="font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded border border-teal-200 flex items-center gap-1">
-                <Building2 className="w-3 h-3 text-teal-600" />
+              <span className="font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200 flex items-center gap-1">
+                <Building2 className="w-3 h-3 text-blue-600" />
                 <span>{appointment.dept_name}</span>
               </span>
             </div>
@@ -135,11 +135,11 @@ export default function RescheduleModal({
           </div>
 
           {/* Same-Specialty Penalty Waiver Notice */}
-          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-start gap-2.5 shadow-2xs">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 flex items-start gap-2.5 shadow-2xs">
+            <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
             <div>
               <p className="font-bold">Same Department Waiver Policy Active</p>
-              <p className="text-[11px] text-emerald-800/90 mt-0.5 leading-relaxed">
+              <p className="text-[11px] text-blue-800/90 mt-0.5 leading-relaxed">
                 Standard cancellation penalties are <strong>100% waived</strong> for rescheduling within the same specialty ({appointment.dept_name}). Your consultation fee (₹
                 {(appointment.fee || 500).toFixed(0)}) and queue token are transferred seamlessly with zero deductions.
               </p>
@@ -157,7 +157,7 @@ export default function RescheduleModal({
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-teal-600" />
+                <Calendar className="w-3.5 h-3.5 text-blue-600" />
                 <span>Select New Appointment Date *:</span>
               </span>
               <span className="text-[10px] text-slate-400 font-normal">Min: Today</span>
@@ -167,7 +167,7 @@ export default function RescheduleModal({
               min={todayStr}
               value={newDate}
               onChange={(e) => setNewDate(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               required
             />
           </div>
@@ -175,7 +175,7 @@ export default function RescheduleModal({
           {/* Select New Time Slot */}
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-teal-600" />
+              <Clock className="w-3.5 h-3.5 text-blue-600" />
               <span>Select Available OPD Time Slot *:</span>
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -189,15 +189,15 @@ export default function RescheduleModal({
                     onClick={() => setSelectedSlot(slot)}
                     className={`py-2 px-2 rounded-xl text-xs font-semibold border transition-all text-center flex flex-col items-center justify-center ${
                       isSelected
-                        ? "bg-teal-600 text-white border-teal-600 shadow-xs ring-2 ring-teal-600/20"
-                        : "bg-white text-slate-700 border-slate-200 hover:border-teal-300 hover:bg-teal-50/50"
+                        ? "bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-600/20"
+                        : "bg-white text-slate-700 border-slate-200 hover:border-blue-300 hover:bg-blue-50/50"
                     }`}
                   >
                     <span>{slot}</span>
                     {isCurrent && (
                       <span
                         className={`text-[9px] ${
-                          isSelected ? "text-teal-200" : "text-slate-400"
+                          isSelected ? "text-blue-200" : "text-slate-400"
                         }`}
                       >
                         (Current)
@@ -217,7 +217,7 @@ export default function RescheduleModal({
             <select
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+              className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
             >
               <option value="Personal Schedule Conflict">Personal Schedule Conflict</option>
               <option value="Work / Office Commitment">Work / Office Commitment</option>
@@ -240,7 +240,7 @@ export default function RescheduleModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition-all flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all flex items-center gap-1.5"
             >
               {isSubmitting ? (
                 <>

@@ -50,8 +50,8 @@ export default function DoctorsDirectoryPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Stethoscope className="w-4 h-4 text-teal-600" />
-                <span className="text-xs font-bold uppercase tracking-wider text-teal-700">
+                <Stethoscope className="w-4 h-4 text-blue-600" />
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-700">
                   CareSlot Out-Patient Department Directory
                 </span>
               </div>
@@ -82,7 +82,7 @@ export default function DoctorsDirectoryPage() {
                 placeholder="Search doctor, qualification, room..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               />
             </div>
 
@@ -91,7 +91,7 @@ export default function DoctorsDirectoryPage() {
               <select
                 value={selectedDept}
                 onChange={(e) => setSelectedDept(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 <option value="All">All Departments ({departments.length})</option>
                 {departments.map((d) => (
@@ -107,7 +107,7 @@ export default function DoctorsDirectoryPage() {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 <option value="All">All Live Statuses</option>
                 <option value="Available">Available Now (In OPD)</option>
@@ -122,7 +122,7 @@ export default function DoctorsDirectoryPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 <option value="default">Sort by: Default</option>
                 <option value="fee_asc">Fee: Low to High</option>
@@ -138,7 +138,7 @@ export default function DoctorsDirectoryPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
         <div className="flex items-center justify-between mb-6">
           <p className="text-xs font-semibold text-slate-600">
-            Showing <span className="text-teal-700 font-bold">{filteredDoctors.length}</span>{" "}
+            Showing <span className="text-blue-700 font-bold">{filteredDoctors.length}</span>{" "}
             specialists on duty
           </p>
 
@@ -150,7 +150,7 @@ export default function DoctorsDirectoryPage() {
                 setSelectedStatus("All");
                 setSortBy("default");
               }}
-              className="text-xs text-teal-600 hover:text-teal-700 font-semibold flex items-center gap-1"
+              className="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
             >
               <RefreshCw className="w-3 h-3" />
               <span>Reset Filters</span>
@@ -182,7 +182,7 @@ export default function DoctorsDirectoryPage() {
                 setSelectedDept("All");
                 setSelectedStatus("All");
               }}
-              className="px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-bold"
+              className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold"
             >
               Show All Doctors
             </button>

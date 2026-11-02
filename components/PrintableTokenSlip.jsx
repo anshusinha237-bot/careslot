@@ -29,13 +29,13 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
         {/* Modal Action Header (hidden during print) */}
         <div className="bg-slate-900 text-white p-4 flex items-center justify-between no-print">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-            <span className="font-bold text-sm">Appointment Confirmed & Token Allocated</span>
+            <CheckCircle2 className="w-5 h-5 text-blue-400" />
+            <span className="font-bold text-sm">Appointment Confirmed &amp; Token Allocated</span>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition-colors"
+              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition-colors"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print Slip</span>
@@ -54,13 +54,13 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
           {/* Hospital Header */}
           <div className="text-center border-b-2 border-dashed border-slate-300 pb-4 mb-4">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <Activity className="w-6 h-6 text-teal-600" />
+              <Activity className="w-6 h-6 text-blue-600" />
               <h1 className="text-xl font-black tracking-tight text-slate-900 uppercase">
                 CareSlot Hospital OPD
               </h1>
             </div>
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-              Out-Patient Department (OPD) Consultation Token & Slip
+              Out-Patient Department (OPD) Consultation Token &amp; Slip
             </p>
             <p className="text-[10px] text-slate-400 mt-0.5">
               Sector 12, Health City • Tel: +91 (11) 2658-8500 • Emergency: 108
@@ -68,18 +68,18 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
           </div>
 
           {/* Large Token Banner */}
-          <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border-2 border-teal-500 rounded-xl p-4 text-center mb-5">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-teal-700 block">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-500 rounded-xl p-4 text-center mb-5">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-blue-700 block">
               YOUR QUEUE TOKEN NUMBER
             </span>
-            <span className="text-4xl font-black text-teal-900 tracking-tight block my-1">
+            <span className="text-4xl font-black text-blue-900 tracking-tight block my-1">
               TOKEN #{appointment.token_number}
             </span>
             <span className="text-xs font-semibold text-slate-600 block">
               Please watch the digital OPD board for your turn
             </span>
             {appointment.rescheduled && (
-              <span className="inline-block mt-2 bg-teal-100 text-teal-800 text-[10px] font-bold px-2 py-0.5 rounded border border-teal-300">
+              <span className="inline-block mt-2 bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-300">
                 Rescheduled to {appointment.appointment_date} ({appointment.appointment_time})
               </span>
             )}
@@ -92,7 +92,7 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
               <span className="font-bold text-slate-900 text-sm block">
                 {appointment.doctor_name}
               </span>
-              <span className="text-teal-600 font-medium">{appointment.dept_name}</span>
+              <span className="text-blue-600 font-medium">{appointment.dept_name}</span>
             </div>
 
             <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
@@ -104,9 +104,9 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
             </div>
 
             <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Date & Shift</span>
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">Date &amp; Shift</span>
               <span className="font-bold text-slate-900 block flex items-center gap-1 mt-0.5">
-                <Calendar className="w-3.5 h-3.5 text-teal-600" />
+                <Calendar className="w-3.5 h-3.5 text-blue-600" />
                 {appointment.appointment_date}
               </span>
             </div>
@@ -114,7 +114,7 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
             <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
               <span className="text-[10px] uppercase font-bold text-slate-400 block">Time Slot</span>
               <span className="font-bold text-slate-900 block flex items-center gap-1 mt-0.5">
-                <Clock className="w-3.5 h-3.5 text-teal-600" />
+                <Clock className="w-3.5 h-3.5 text-blue-600" />
                 {appointment.appointment_time}
               </span>
             </div>
@@ -223,7 +223,7 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
           <Link
             href="/patient"
             onClick={onClose}
-            className="text-xs font-semibold text-teal-600 hover:text-teal-700 hover:underline"
+            className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline"
           >
             View in My Appointments Dashboard →
           </Link>

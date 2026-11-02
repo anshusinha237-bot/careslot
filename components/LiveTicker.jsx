@@ -14,10 +14,10 @@ export default function LiveTicker() {
     <div className="bg-slate-950 text-slate-200 text-xs py-2 px-4 border-b border-slate-800/80 flex items-center justify-between overflow-hidden shadow-inner">
       <div className="flex items-center gap-2 shrink-0 pr-4 border-r border-slate-800">
         <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-400"></span>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400"></span>
         </span>
-        <span className="font-bold uppercase tracking-wider text-teal-400 font-mono text-[11px]">
+        <span className="font-bold uppercase tracking-wider text-blue-400 font-mono text-[11px]">
           OPD Stream:
         </span>
       </div>
@@ -56,11 +56,11 @@ export default function LiveTicker() {
       </div>
 
       <div className="hidden md:flex items-center gap-2 pl-4 border-l border-slate-800 shrink-0 text-slate-400">
-        <Clock className="w-3.5 h-3.5 text-teal-400" />
+        <Clock className="w-3.5 h-3.5 text-blue-400" />
         <span className="text-[11px]">Shift: 08:30 AM – 06:30 PM</span>
         <Link
           href="/queue"
-          className="text-teal-400 hover:text-teal-300 ml-2 inline-flex items-center gap-0.5 font-bold hover:underline"
+          className="text-blue-400 hover:text-blue-300 ml-2 inline-flex items-center gap-0.5 font-bold hover:underline"
         >
           <span>Waiting Board</span>
           <ChevronRight className="w-3 h-3" />

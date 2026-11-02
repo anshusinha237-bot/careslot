@@ -69,9 +69,9 @@ export default function QATestSuitePage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <FileCheck2 className="w-4 h-4 text-teal-600" />
-                <span className="text-xs font-bold uppercase tracking-wider text-teal-700">
-                  Chapter 6: System Testing & Quality Assurance
+                <FileCheck2 className="w-4 h-4 text-blue-600" />
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-700">
+                  Chapter 6: System Testing &amp; Quality Assurance
                 </span>
               </div>
               <h1 className="text-3xl font-black text-slate-900 tracking-tight">
@@ -85,7 +85,7 @@ export default function QATestSuitePage() {
             <button
               onClick={handleRunAllTests}
               disabled={isRunning}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 disabled:opacity-50 transition-all self-start md:self-auto"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 disabled:opacity-50 transition-all self-start md:self-auto"
             >
               {isRunning ? (
                 <>
@@ -106,7 +106,7 @@ export default function QATestSuitePage() {
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
               <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Test Cases</span>
               <span className="text-2xl font-black text-slate-900 mt-0.5 block">30 / 30</span>
-              <span className="text-[10px] text-teal-600 font-semibold">100% Executed</span>
+              <span className="text-[10px] text-blue-600 font-semibold">100% Executed</span>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
@@ -173,7 +173,7 @@ export default function QATestSuitePage() {
                     <tr
                       key={tc.id}
                       className={`hover:bg-slate-50/80 transition-colors ${
-                        isCurrent ? "bg-teal-50/60 font-medium" : ""
+                        isCurrent ? "bg-blue-50/60 font-medium" : ""
                       }`}
                     >
                       <td className="py-3 px-4 font-mono font-bold text-slate-900">
