@@ -24,13 +24,13 @@ import {
   Check,
 } from "lucide-react";
 
-export default function BookingModal({ doctor, onClose, onBookingSuccess }) {
+export default function BookingModal({ doctor, preselectedSlot = "", onClose, onBookingSuccess }) {
   const { currentUser, appointments, bookAppointment } = useApp();
 
   const todayStr = new Date().toISOString().split("T")[0];
   const [step, setStep] = useState(1); // 1 = Details, 2 = Payment
   const [selectedDate, setSelectedDate] = useState(todayStr);
-  const [selectedSlot, setSelectedSlot] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState(preselectedSlot || "");
   const [patientName, setPatientName] = useState(currentUser?.full_name || "");
   const [patientEmail, setPatientEmail] = useState(currentUser?.email || "");
   const [patientPhone, setPatientPhone] = useState(currentUser?.phone || "+91 91234 56789");

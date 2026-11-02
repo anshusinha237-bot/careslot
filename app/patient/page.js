@@ -371,8 +371,14 @@ export default function PatientDashboardPage() {
                           {/* Live Queue Position Status */}
                           <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4 space-y-2">
                             <div className="flex items-center justify-between text-xs">
-                              <span className="text-slate-500">Doctor&apos;s Current Token:</span>
-                              <span className="font-mono font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200">
+                              <div className="flex items-center gap-1.5 text-slate-700 font-bold">
+                                <span className="relative flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
+                                </span>
+                                <span>Doctor&apos;s Current Token:</span>
+                              </div>
+                              <span className="font-mono font-bold text-slate-900 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 shadow-2xs">
                                 Token #{currentServing}
                               </span>
                             </div>
