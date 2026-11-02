@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "../../context/AppContext";
 import Navbar from "../../components/Navbar";
@@ -52,6 +52,21 @@ export default function AdminDashboardPage() {
     deleteDepartment,
     verifyAdminOtp,
   } = useApp();
+
+  // Auth Guard: Admin access only
+  useEffect(() => {
+    if (!isAuthLoading && (!currentUser || currentUser.role !== "admin")) {
+      router.push("/login");
+    }
+  }, [isAuthLoading, currentUser, router]);
+
+  if (isAuthLoading || !currentUser || currentUser.role !== "admin") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+      </div>
+    );
+  }
 
   const [activeTab, setActiveTab] = useState("analytics"); // analytics, patients, doctors, staff, bookings, departments, security
   const [showAddDoctorModal, setShowAddDoctorModal] = useState(false);

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useApp } from "../../context/AppContext";
 import Navbar from "../../components/Navbar";
 import DoctorCard from "../../components/DoctorCard";
@@ -22,7 +23,23 @@ import {
 } from "lucide-react";
 
 export default function DoctorsDirectoryPage() {
-  const { doctors, departments } = useApp();
+  const router = useRouter();
+  const { doctors, departments, currentUser, isAuthLoading } = useApp();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthLoading && !currentUser) {
+      router.push("/login");
+    }
+  }, [isAuthLoading, currentUser, router]);
+
+  if (isAuthLoading || !currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+      </div>
+    );
+  }
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDept, setSelectedDept] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");

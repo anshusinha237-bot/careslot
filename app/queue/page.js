@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useApp } from "../../context/AppContext";
 import Navbar from "../../components/Navbar";
 import {
@@ -19,7 +20,24 @@ import {
 } from "lucide-react";
 
 export default function LiveQueueBoardPage() {
-  const { doctors, appointments } = useApp();
+  const router = useRouter();
+  const { doctors, appointments, currentUser, isAuthLoading } = useApp();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthLoading && !currentUser) {
+      router.push("/login");
+    }
+  }, [isAuthLoading, currentUser, router]);
+
+  if (isAuthLoading || !currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+      </div>
+    );
+  }
+
   const [tokenSearch, setTokenSearch] = useState("");
   const [patientLookupResult, setPatientLookupResult] = useState(null);
   const [chimeMessage, setChimeMessage] = useState("");

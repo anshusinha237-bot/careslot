@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useApp } from "../context/AppContext";
 import Navbar from "../components/Navbar";
 import DoctorCard from "../components/DoctorCard";
@@ -32,12 +33,21 @@ import {
 } from "lucide-react";
 
 export default function HomePage() {
+  const router = useRouter();
   const { doctors, departments, currentUser, isAuthLoading } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDept, setSelectedDept] = useState("All");
   const [bookingDoctor, setBookingDoctor] = useState(null);
   const [confirmedAppointment, setConfirmedAppointment] = useState(null);
   const [isSymptomCheckerOpen, setIsSymptomCheckerOpen] = useState(false);
+
+  const handleBookDoctor = (doc) => {
+    if (!currentUser) {
+      router.push("/login");
+      return;
+    }
+    setBookingDoctor(doc);
+  };
 
   // Filter featured doctors
   const filteredDoctors = doctors.filter((doc) => {
@@ -396,7 +406,7 @@ export default function HomePage() {
               <DoctorCard
                 key={doc.doctor_id}
                 doctor={doc}
-                onBook={(doctor) => setBookingDoctor(doctor)}
+                onBook={handleBookDoctor}
               />
             ))}
           </div>
@@ -486,7 +496,7 @@ export default function HomePage() {
       <SymptomCheckerModal
         isOpen={isSymptomCheckerOpen}
         onClose={() => setIsSymptomCheckerOpen(false)}
-        onSelectDoctor={(doc) => setBookingDoctor(doc)}
+        onSelectDoctor={(doc) => handleBookDoctor(doc)}
       />
     </div>
   );

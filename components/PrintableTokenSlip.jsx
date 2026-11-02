@@ -25,7 +25,7 @@ export default function PrintableTokenSlip({ appointment, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[80] overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Action Header (hidden during print) */}
         <div className="bg-slate-900 text-white p-4 flex items-center justify-between no-print">

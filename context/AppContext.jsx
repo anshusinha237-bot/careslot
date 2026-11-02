@@ -412,6 +412,15 @@ export function AppProvider({ children }) {
     paymentStatus = "paid",
     transactionId,
   }) => {
+    // Require authentication for all bookings
+    if (!currentUser) {
+      return {
+        success: false,
+        message:
+          "Authentication Required: Each and every function in CareSlot can only be performed after logging in. Please sign in or register to book your appointment.",
+      };
+    }
+
     const doc = doctors.find((d) => d.doctor_id === Number(doctorId));
     if (!doc) {
       return { success: false, message: "Doctor not found." };
@@ -515,6 +524,8 @@ export function AppProvider({ children }) {
   // Cancel Appointment via API with Refund Policy (TC-10)
   // Policy: < 4h = No refund (100% cut), 4-8h = 17% cut (83% refund), > 8h = 100% full refund
   const cancelAppointment = (appointmentId, refundDetails = {}) => {
+    if (!currentUser) return { success: false, message: "Authentication required to cancel appointments." };
+
     const {
       refundAmount = 0,
       cancellationFee = 0,
@@ -569,6 +580,8 @@ export function AppProvider({ children }) {
 
   // Reschedule Appointment to a new date & slot with Same-Department waiver
   const rescheduleAppointment = (appointmentId, newDate, newTime, reason = "", deptName = "") => {
+    if (!currentUser) return { success: false, message: "Authentication required to reschedule appointments." };
+
     const rescheduledAt = new Date().toISOString();
 
     let updatedAppointment = null;

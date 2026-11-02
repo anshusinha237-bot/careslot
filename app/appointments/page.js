@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import BookingModal from "../../components/BookingModal";
@@ -30,6 +31,7 @@ import {
 } from "lucide-react";
 
 export default function AppointmentsPage() {
+  const router = useRouter();
   const {
     appointments,
     doctors,
@@ -38,7 +40,23 @@ export default function AppointmentsPage() {
     cancelAppointment,
     rescheduleAppointment,
     currentUser,
+    isAuthLoading,
   } = useApp();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthLoading && !currentUser) {
+      router.push("/login");
+    }
+  }, [isAuthLoading, currentUser, router]);
+
+  if (isAuthLoading || !currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+      </div>
+    );
+  }
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDept, setSelectedDept] = useState("All");

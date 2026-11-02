@@ -88,6 +88,10 @@ export default function BookingModal({
   const validateStep1 = () => {
     setErrorMsg("");
 
+    if (!currentUser) {
+      setErrorMsg("Authentication Required: Every appointment booking can only be performed after login. Please sign in to confirm your booking.");
+      return false;
+    }
     if (!selectedHospital) {
       setErrorMsg("Please select a hospital facility where doctor OPD is available.");
       return false;
@@ -167,7 +171,7 @@ export default function BookingModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[70] overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150 max-h-[92vh] flex flex-col">
         {/* Modal Top Header */}
         <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white p-5 flex items-start justify-between shrink-0">
@@ -201,6 +205,24 @@ export default function BookingModal({
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Unauthenticated Login Required Notice Banner */}
+        {!currentUser && (
+          <div className="bg-amber-50 border-b border-amber-200 px-5 py-3 text-xs text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4 text-amber-700 shrink-0" />
+              <span className="font-bold">
+                Login Required: Each and every booking function can only be performed after logging in.
+              </span>
+            </div>
+            <a
+              href="/login"
+              className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shrink-0 transition-colors shadow-xs text-center"
+            >
+              Sign In to Book →
+            </a>
+          </div>
+        )}
 
         {/* Step Progress Bar */}
         <div className="grid grid-cols-2 bg-slate-100 text-xs font-bold border-b border-slate-200 shrink-0">

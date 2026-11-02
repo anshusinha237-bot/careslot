@@ -2,7 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useApp } from "../context/AppContext";
+import BookingModal from "./BookingModal";
+import PrintableTokenSlip from "./PrintableTokenSlip";
 import {
   Sparkles,
   MessageSquare,
@@ -17,29 +20,59 @@ import {
   ShieldCheck,
   ChevronRight,
   PhoneCall,
+  Calendar,
+  Lock,
 } from "lucide-react";
 
 export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
-  const { doctors, departments } = useApp();
+  const router = useRouter();
+  const { doctors, departments, currentUser } = useApp();
   const [isOpen, setIsOpen] = useState(false);
+  const [bookingDoctor, setBookingDoctor] = useState(null);
+  const [confirmedAppointment, setConfirmedAppointment] = useState(null);
   const [messages, setMessages] = useState([
     {
       id: "welcome-1",
       sender: "ai",
-      text: "Hello! I am CareSlot AI Healthcare Assistant. I can help guide you to the right department, explain our OPD queue and token system, or assist you with booking an appointment.",
+      text: "Hello! I am CareSlot AI Healthcare Assistant. Tell me your symptoms, department, or doctor, and I will directly connect you to the OPD Booking Counter.",
       timestamp: "Just now",
       suggestions: [
+        "Book Dr. Priya Sharma",
+        "Book Neurology Slot",
+        "Book Pediatrics Slot",
+        "Book Orthopedics Slot",
         "Recommend doctor for chest pain",
-        "Headache and dizziness",
-        "Child fever and cough",
         "How does the live queue work?",
-        "What is the cancellation refund policy?",
       ],
     },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // Direct Booking Handler
+  const handleDirectBooking = (targetDoc) => {
+    if (!targetDoc) return;
+
+    if (!currentUser) {
+      const noticeMsg = {
+        id: Date.now().toString(),
+        sender: "ai",
+        text: "🔒 Authentication Required: Each booking function can only be performed after logging in. Please sign in to proceed directly to the booking counter.",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        suggestions: ["Sign In Now", "View Live Queue"],
+      };
+      setMessages((prev) => [...prev, noticeMsg]);
+      setTimeout(() => {
+        handleClose();
+        router.push("/login");
+      }, 700);
+      return;
+    }
+
+    // Directly open the booking counter!
+    setBookingDoctor(targetDoc);
+  };
 
   // Sync external open state if provided
   useEffect(() => {
@@ -85,9 +118,49 @@ export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
       let matchedDept = null;
       let matchedDoc = null;
       let suggestions = [];
+      let autoOpenBooking = false;
 
-      // Symptom analysis
-      if (
+      // Handle Direct "Book" Actions
+      if (lower.startsWith("book") || lower.includes("book") || lower.includes("appoint")) {
+        if (lower.includes("priya") || lower.includes("cardio") || lower.includes("heart") || lower.includes("chest")) {
+          matchedDept = "Cardiology";
+          matchedDoc = doctors.find((d) => d.dept_name.includes("Cardiology")) || doctors[0];
+        } else if (lower.includes("rajesh") || lower.includes("neuro") || lower.includes("head") || lower.includes("brain")) {
+          matchedDept = "Neurology";
+          matchedDoc = doctors.find((d) => d.dept_name.includes("Neurology"));
+        } else if (lower.includes("ananya") || lower.includes("pediatric") || lower.includes("child") || lower.includes("baby")) {
+          matchedDept = "Pediatrics";
+          matchedDoc = doctors.find((d) => d.dept_name.includes("Pediatrics"));
+        } else if (lower.includes("vikram") || lower.includes("ortho") || lower.includes("joint") || lower.includes("bone")) {
+          matchedDept = "Orthopedics";
+          matchedDoc = doctors.find((d) => d.dept_name.includes("Orthopedics"));
+        } else if (lower.includes("sneha") || lower.includes("derma") || lower.includes("skin")) {
+          matchedDept = "Dermatology";
+          matchedDoc = doctors.find((d) => d.dept_name.includes("Dermatology"));
+        } else if (lower.includes("farhan") || lower.includes("ent") || lower.includes("ear") || lower.includes("throat")) {
+          matchedDept = "ENT (Otolaryngology)";
+          matchedDoc = doctors.find((d) => d.dept_name.includes("ENT"));
+        } else if (lower.includes("meenakshi") || lower.includes("gynec") || lower.includes("matern") || lower.includes("pregnan")) {
+          matchedDept = "Gynecology & Obstetrics";
+          matchedDoc = doctors.find((d) => d.dept_name.includes("Gynecology"));
+        } else {
+          matchedDept = "General Medicine";
+          matchedDoc = doctors.find((d) => d.dept_name.includes("Medicine")) || doctors[0];
+        }
+
+        if (!currentUser) {
+          aiResponseText = `🔒 Authentication Required: Each booking function can only be performed after login. Redirecting you to the Login page to authenticate before booking with ${matchedDoc?.full_name || "Doctor"}...`;
+          suggestions = ["Go to Login Page"];
+          setTimeout(() => {
+            handleClose();
+            router.push("/login");
+          }, 800);
+        } else {
+          aiResponseText = `Connecting you directly to the OPD Booking Counter for ${matchedDoc?.full_name} (${matchedDept}). Please select your hospital branch, date, and preferred slot:`;
+          suggestions = [`Book ${matchedDoc?.full_name}`, "View Live Queue Concourse"];
+          autoOpenBooking = true;
+        }
+      } else if (
         lower.includes("chest") ||
         lower.includes("heart") ||
         lower.includes("palpitat") ||
@@ -222,7 +295,13 @@ export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
 
       setMessages((prev) => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 450);
+
+      if (autoOpenBooking && matchedDoc) {
+        setTimeout(() => {
+          setBookingDoctor(matchedDoc);
+        }, 350);
+      }
+    }, 400);
   };
 
   return (
@@ -231,7 +310,7 @@ export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-bold text-xs shadow-xl shadow-blue-600/30 hover:scale-105 active:scale-95 transition-all duration-200 group border border-white/20"
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-bold text-xs shadow-xl shadow-blue-600/30 hover:scale-105 active:scale-95 transition-all duration-200 group border border-white/20"
           title="Open AI Healthcare Assistant"
         >
           <div className="relative">
@@ -244,7 +323,7 @@ export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
 
       {/* Interactive Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[580px] max-h-[85vh] bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 w-[calc(100vw-32px)] sm:w-[420px] h-[580px] max-h-[85vh] bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white p-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
@@ -256,7 +335,7 @@ export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
                   <h3 className="font-bold text-sm">CareSlot AI Assistant</h3>
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 </div>
-                <p className="text-[10px] text-blue-200">Clinical Triage &amp; OPD Guidance</p>
+                <p className="text-[10px] text-blue-200">Clinical Triage &amp; Direct OPD Booking</p>
               </div>
             </div>
 
@@ -296,29 +375,37 @@ export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
                       : "bg-white text-slate-800 border border-slate-200/80 rounded-bl-xs"
                   }`}
                 >
-                  <p className="leading-relaxed">{msg.text}</p>
+                  <p className="leading-relaxed whitespace-pre-line">{msg.text}</p>
 
-                  {/* Doctor Recommendation Card if matched */}
+                  {/* Doctor Recommendation Card with DIRECT BOOKING COUNTER ACTION */}
                   {msg.matchedDoc && (
-                    <div className="p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-slate-800 mt-2">
+                    <div className="p-3 rounded-2xl bg-blue-50/80 border border-blue-200/90 text-slate-800 mt-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-blue-700 uppercase">
+                        <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">
                           Recommended Specialist
                         </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-[10px] text-slate-600 font-mono font-bold bg-white px-2 py-0.5 rounded border border-blue-200">
                           Fee: ₹{msg.matchedDoc.consultation_fee}
                         </span>
                       </div>
-                      <p className="font-bold text-slate-900 mt-0.5">{msg.matchedDoc.full_name}</p>
-                      <p className="text-[11px] text-blue-600">{msg.matchedDoc.dept_name} • {msg.matchedDoc.opd_room}</p>
-                      <Link
-                        href="/doctors"
-                        onClick={handleClose}
-                        className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg transition-colors"
+                      <p className="font-bold text-slate-900 text-sm mt-1">{msg.matchedDoc.full_name}</p>
+                      <p className="text-[11px] text-blue-700 font-medium">
+                        {msg.matchedDoc.dept_name} • {msg.matchedDoc.opd_room}
+                      </p>
+
+                      {/* Direct Booking Action Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleDirectBooking(msg.matchedDoc)}
+                        className="mt-2.5 w-full flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-700 py-2.5 px-3 rounded-xl transition-all shadow-md shadow-blue-600/20 active:scale-95"
                       >
-                        <span>Book Appointment Slot</span>
-                        <ChevronRight className="w-3 h-3" />
-                      </Link>
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>
+                          {currentUser
+                            ? "Open Booking Counter Directly →"
+                            : "Sign In to Book Appointment →"}
+                        </span>
+                      </button>
                     </div>
                   )}
 
@@ -352,7 +439,7 @@ export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
             {isTyping && (
               <div className="flex items-center gap-2 text-slate-400 text-xs italic p-2">
                 <Bot className="w-4 h-4 text-blue-600 animate-spin-slow" />
-                <span>AI Assistant is analyzing medical triage data...</span>
+                <span>AI Assistant is preparing the OPD booking counter...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -371,7 +458,7 @@ export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about symptoms, doctor or queue..."
+                placeholder="Ask symptoms or say 'Book Dr. Priya'..."
                 className="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50/50"
               />
               <button
@@ -384,6 +471,36 @@ export default function AiHealthChatbot({ isOpenExternal, onCloseExternal }) {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Direct Booking Modal from AI Assistant */}
+      {bookingDoctor && (
+        <BookingModal
+          doctor={bookingDoctor}
+          onClose={() => setBookingDoctor(null)}
+          onBookingSuccess={(app) => {
+            setBookingDoctor(null);
+            setConfirmedAppointment(app);
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: Date.now().toString(),
+                sender: "ai",
+                text: `🎉 Appointment Successfully Confirmed!\n\nYour digital OPD Token #${app.token_number} has been allocated with ${app.doctor_name} at ${app.hospital_name || "CareSlot Apex Multi-Specialty Hospital"} on ${app.appointment_date} (${app.appointment_time}). Your printable token slip is ready below!`,
+                timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                suggestions: ["View Live Queue Concourse", "Book Another Appointment"],
+              },
+            ]);
+          }}
+        />
+      )}
+
+      {/* Printable Slip from AI Assistant */}
+      {confirmedAppointment && (
+        <PrintableTokenSlip
+          appointment={confirmedAppointment}
+          onClose={() => setConfirmedAppointment(null)}
+        />
       )}
     </>
   );
