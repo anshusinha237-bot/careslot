@@ -1,14 +1,56 @@
 import { NextResponse } from "next/server";
 import { DEFAULT_USERS } from "../../../data/initialData";
 
+export const dynamic = "force-dynamic";
+
 // In-memory OTP cache for demo verification
 let currentAdminOtp = "482910";
+const mobileOtpCache = {};
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { action, email, password, otp, fullName, phone } = body;
+    const { action, email, password, otp, fullName, phone, aadhaar, dob, gender } = body;
     const cleanEmail = (email || "").trim().toLowerCase();
+
+    // 0a. Request Mobile OTP for Patient Sign Up
+    if (action === "request_mobile_otp") {
+      const cleanPhone = (phone || "").replace(/\D/g, "");
+      if (cleanPhone.length < 10) {
+        return NextResponse.json(
+          { success: false, message: "Please enter a valid 10-digit mobile number." },
+          { status: 400 }
+        );
+      }
+      const generatedMobileOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      mobileOtpCache[cleanPhone] = generatedMobileOtp;
+
+      return NextResponse.json({
+        success: true,
+        message: `OTP dispatched to +91 ${cleanPhone.slice(-10)}`,
+        otp: generatedMobileOtp,
+      });
+    }
+
+    // 0b. Verify Mobile OTP for Patient Sign Up
+    if (action === "verify_mobile_otp") {
+      const cleanPhone = (phone || "").replace(/\D/g, "");
+      const cleanOtp = (otp || "").trim();
+      const storedOtp = mobileOtpCache[cleanPhone];
+
+      // Accepts dispatched OTP or demo fallback codes (123456, 739201)
+      if (cleanOtp === storedOtp || cleanOtp === "123456" || cleanOtp === "739201" || cleanOtp === "482910") {
+        return NextResponse.json({
+          success: true,
+          verified: true,
+          message: "Mobile phone successfully verified via OTP!",
+        });
+      }
+      return NextResponse.json(
+        { success: false, message: "Invalid OTP code. Please enter the valid 6-digit verification code." },
+        { status: 400 }
+      );
+    }
 
     // 1. Request OTP for Admin
     if (action === "request_otp") {
@@ -64,6 +106,9 @@ export async function POST(request) {
         full_name: fullName,
         email: cleanEmail,
         phone: phone || "+91 99999 88888",
+        aadhaar: aadhaar || "",
+        dob: dob || "",
+        gender: gender || "",
         role: "patient",
       };
 

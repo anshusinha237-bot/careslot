@@ -6,7 +6,7 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "postinstall": "prisma skills sync || exit 0"
+    "postinstall": "prisma generate || exit 0"
   },
   "dependencies": {
     "lucide-react": "^1.66.0",

@@ -3,6 +3,8 @@ import { prisma } from "../../../lib/prisma";
 import { checkDbConnection } from "../../../lib/db";
 import { INITIAL_DEPARTMENTS, INITIAL_DOCTORS, DEFAULT_USERS } from "../../../data/initialData";
 
+export const dynamic = "force-dynamic";
+
 export async function POST() {
   const { connected, error } = await checkDbConnection();
   if (!connected) {
