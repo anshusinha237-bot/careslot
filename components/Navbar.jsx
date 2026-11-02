@@ -66,25 +66,39 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
     const role = currentUser?.role || "patient";
 
     const baseLinks = [
-      { name: "Home", href: "/", icon: Home },
-      { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
-      { name: "Live Queue", href: "/queue", icon: Clock },
-      { name: "Appointments", href: "/appointments", icon: Calendar },
-      { name: "Patient Portal", href: "/patient", icon: User },
-      { name: "Contact Us", href: "/contact", icon: PhoneCall },
+      { name: "Home", href: "/", icon: Home, iconColor: "text-blue-500" },
+      { name: "Find Doctors", href: "/doctors", icon: Stethoscope, iconColor: "text-sky-600" },
+      { name: "Live Queue", href: "/queue", icon: Clock, iconColor: "text-emerald-500", hasLiveDot: true },
+      { name: "Appointments", href: "/appointments", icon: Calendar, iconColor: "text-indigo-500" },
+      { name: "Patient Portal", href: "/patient", icon: User, iconColor: "text-blue-600" },
+      { name: "Contact Us", href: "/contact", icon: PhoneCall, iconColor: "text-teal-600" },
     ];
 
     if (role === "doctor") {
       return [
         ...baseLinks,
-        { name: "Doctor Console", href: "/doctor", icon: Activity, highlight: true },
+        {
+          name: "Doctor Console",
+          href: "/doctor",
+          icon: Activity,
+          highlight: true,
+          highlightType: "doctor",
+          iconColor: "text-teal-600",
+        },
       ];
     }
 
     if (role === "admin") {
       return [
         ...baseLinks,
-        { name: "Admin Panel", href: "/admin", icon: Shield, highlight: true },
+        {
+          name: "Admin Panel",
+          href: "/admin",
+          icon: Shield,
+          highlight: true,
+          highlightType: "admin",
+          iconColor: "text-purple-600",
+        },
       ];
     }
 
@@ -100,18 +114,18 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
   const getRoleBadgeStyle = (role) => {
     switch (role) {
       case "doctor":
-        return "bg-sky-50 text-sky-700 border-sky-200/80";
+        return "bg-teal-50 text-teal-700 border-teal-200/90";
       case "admin":
-        return "bg-purple-50 text-purple-700 border-purple-200/80";
+        return "bg-purple-50 text-purple-700 border-purple-200/90";
       default:
-        return "bg-blue-50 text-blue-700 border-blue-200/80";
+        return "bg-blue-50 text-blue-700 border-blue-200/90";
     }
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_2px_15px_-3px_rgba(15,23,42,0.04)] transition-all">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-blue-100/90 shadow-[0_4px_20px_-4px_rgba(37,99,235,0.06)] transition-all">
       {/* Sleek Healthcare Top Gradient Accent Bar */}
-      <div className="h-[2px] w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-500" />
+      <div className="h-[3px] w-full bg-gradient-to-r from-blue-600 via-cyan-400 to-indigo-600 shadow-[0_1px_6px_rgba(37,99,235,0.25)]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -121,8 +135,8 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
           <Link href="/" className="flex items-center gap-3 group shrink-0">
             {/* Glowing Icon Tile */}
             <div className="relative">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl blur-xs opacity-20 group-hover:opacity-40 transition-opacity duration-300" />
-              <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 text-white flex items-center justify-center shadow-sm shadow-blue-600/30 ring-1 ring-white/20 group-hover:scale-105 transition-all duration-200">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl blur-xs opacity-25 group-hover:opacity-50 transition-opacity duration-300" />
+              <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 text-white flex items-center justify-center shadow-md shadow-blue-600/30 ring-1 ring-white/20 group-hover:scale-105 transition-all duration-200">
                 <Activity className="w-4.5 h-4.5 stroke-[2.4]" />
               </div>
             </div>
@@ -133,7 +147,7 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
                 <span className="text-lg font-black tracking-tight text-slate-900">
                   Care<span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Slot</span>
                 </span>
-                <span className="hidden xs:inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-black bg-blue-50 text-blue-700 border border-blue-200/70 tracking-wider">
+                <span className="hidden xs:inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-black bg-blue-50 text-blue-700 border border-blue-200/80 tracking-wider shadow-2xs">
                   OPD
                 </span>
               </div>
@@ -144,9 +158,9 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
           </Link>
 
           {/* =========================================
-              CENTER: Modern Capsule Navigation Links
+              CENTER: Modern Attractive Capsule Navigation Links
           ========================================= */}
-          <nav className="hidden lg:flex items-center p-1 bg-slate-100/80 rounded-full border border-slate-200/70 shadow-inner max-w-fit mx-2">
+          <nav className="hidden lg:flex items-center p-1.5 bg-gradient-to-r from-blue-50/95 via-sky-50/80 to-indigo-50/95 rounded-full border border-blue-200/90 shadow-[0_3px_12px_-2px_rgba(37,99,235,0.1),inset_0_1px_2px_rgba(255,255,255,0.9)] backdrop-blur-md max-w-fit mx-2">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -154,27 +168,38 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-full text-xs transition-all duration-150 ${
+                  className={`group flex items-center gap-1.5 px-3 xl:px-3.5 py-1.5 rounded-full text-xs transition-all duration-200 ${
                     isActive
-                      ? "text-blue-800 bg-white font-bold shadow-xs border border-slate-200/70 ring-1 ring-blue-500/10"
+                      ? "text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 font-extrabold shadow-md shadow-blue-600/35 ring-2 ring-blue-400/40 scale-[1.02]"
                       : link.highlight
-                      ? "text-indigo-700 bg-indigo-50/80 hover:bg-white font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-white/60 font-semibold"
+                      ? link.highlightType === "admin"
+                        ? "text-purple-800 bg-purple-100/70 hover:bg-white hover:text-purple-900 border border-purple-200/80 font-bold shadow-2xs"
+                        : "text-teal-800 bg-teal-100/70 hover:bg-white hover:text-teal-900 border border-teal-200/80 font-bold shadow-2xs"
+                      : "text-slate-700 hover:text-blue-700 hover:bg-white/95 font-bold hover:shadow-2xs"
                   }`}
                 >
                   <Icon
-                    className={`w-3.5 h-3.5 transition-colors ${
+                    className={`w-3.5 h-3.5 transition-transform group-hover:scale-110 ${
                       isActive
-                        ? "text-blue-600 stroke-[2.4]"
-                        : link.highlight
-                        ? "text-indigo-600 stroke-[2]"
-                        : "text-slate-400 stroke-[1.8]"
+                        ? "text-cyan-200 stroke-[2.4]"
+                        : link.iconColor || "text-blue-600 stroke-[2]"
                     }`}
                   />
                   <span>{link.name}</span>
-                  {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse ml-0.5" />
-                  )}
+
+                  {/* Active glowing indicator dot */}
+                  {isActive ? (
+                    <span className="relative flex h-2 w-2 ml-0.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-80" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-200 ring-1 ring-white" />
+                    </span>
+                  ) : link.hasLiveDot ? (
+                    /* Subtle live queue pulse */
+                    <span className="relative flex h-1.5 w-1.5 ml-0.5" title="Live OPD Queue Active">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                    </span>
+                  ) : null}
                 </Link>
               );
             })}
@@ -189,10 +214,10 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
               <button
                 type="button"
                 onClick={onOpenSymptomChecker}
-                className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 hover:from-blue-100/70 hover:to-indigo-100/70 text-blue-800 text-xs font-bold border border-blue-200/80 shadow-2xs hover:shadow-xs transition-all active:scale-95"
+                className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-600 via-sky-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-sm shadow-blue-600/25 hover:shadow-md hover:scale-[1.02] transition-all active:scale-95 cursor-pointer"
                 title="AI Powered Symptom Triage"
               >
-                <Sparkles className="w-3.5 h-3.5 text-blue-600 animate-spin-slow" />
+                <Sparkles className="w-3.5 h-3.5 text-cyan-200 animate-spin-slow" />
                 <span>AI Triage</span>
               </button>
             )}
@@ -202,22 +227,22 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
               <button
                 type="button"
                 onClick={() => setRoleMenuOpen(!roleMenuOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200/80 bg-white hover:bg-slate-50 text-xs font-medium text-slate-700 transition-all shadow-2xs hover:border-blue-300"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-200/80 bg-gradient-to-r from-blue-50/60 via-white to-sky-50/60 hover:bg-white text-xs font-medium text-slate-700 transition-all shadow-2xs hover:border-blue-400 hover:shadow-xs cursor-pointer"
                 title="Switch role for testing"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
                 </span>
-                <span className="text-slate-400 text-[11px] font-normal">Role:</span>
+                <span className="text-slate-500 text-[11px] font-semibold">Role:</span>
                 <span
-                  className={`text-[11px] font-bold px-2 py-0.5 rounded-full capitalize border ${getRoleBadgeStyle(
+                  className={`text-[11px] font-extrabold px-2 py-0.5 rounded-full capitalize border shadow-2xs ${getRoleBadgeStyle(
                     currentUser?.role
                   )}`}
                 >
                   {currentUser ? currentUser.role : "Guest"}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 transition-transform" />
+                <ChevronDown className="w-3.5 h-3.5 text-blue-500 transition-transform" />
               </button>
 
               {/* Role Switcher Dropdown */}
@@ -405,21 +430,34 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? "text-blue-900 bg-blue-50/90 font-bold border border-blue-200/80 shadow-2xs"
-                      : "text-slate-700 hover:bg-slate-100/70"
+                      ? "text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 shadow-md shadow-blue-600/25 ring-1 ring-blue-400/40"
+                      : link.highlight
+                      ? link.highlightType === "admin"
+                        ? "text-purple-900 bg-purple-50/90 border border-purple-200/80 font-bold"
+                        : "text-teal-900 bg-teal-50/90 border border-teal-200/80 font-bold"
+                      : "text-slate-800 hover:bg-blue-50/70 hover:text-blue-700"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <Icon
-                      className={`w-4 h-4 ${isActive ? "text-blue-600 stroke-[2.2]" : "text-slate-400"}`}
+                      className={`w-4 h-4 ${
+                        isActive
+                          ? "text-cyan-200 stroke-[2.4]"
+                          : link.iconColor || "text-blue-600 stroke-[2]"
+                      }`}
                     />
                     <span>{link.name}</span>
                   </div>
-                  {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                  )}
+                  {isActive ? (
+                    <span className="w-2 h-2 rounded-full bg-cyan-300 ring-2 ring-white/80 animate-pulse" />
+                  ) : link.hasLiveDot ? (
+                    <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-extrabold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      LIVE
+                    </span>
+                  ) : null}
                 </Link>
               );
             })}
