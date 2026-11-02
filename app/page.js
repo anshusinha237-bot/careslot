@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 
 export default function HomePage() {
-  const { doctors, departments } = useApp();
+  const { doctors, departments, currentUser, isAuthLoading } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDept, setSelectedDept] = useState("All");
   const [bookingDoctor, setBookingDoctor] = useState(null);
@@ -70,6 +70,28 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 selection:bg-blue-600 selection:text-white">
       <Navbar onOpenSymptomChecker={() => setIsSymptomCheckerOpen(true)} />
+
+      {/* Visitor Sign-In Top Banner when unauthenticated */}
+      {!isAuthLoading && !currentUser && (
+        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white py-3 px-4 sm:px-6 shadow-md border-b border-blue-800/80">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+              <span className="text-blue-100 font-medium">
+                Welcome to <strong>CareSlot Hospital Portal</strong>. Sign in to access your Patient Portal, live queue tokens, and digital prescriptions.
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href="/login"
+                className="px-4 py-1.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-sm active:scale-95"
+              >
+                Sign In / Register →
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section with Ambient Glow */}
       <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-slate-200/80 bg-white">
@@ -126,6 +148,15 @@ export default function HomePage() {
                       <span>Find Doctors</span>
                       <ArrowRight className="w-4 h-4" />
                     </Link>
+                    {!currentUser && (
+                      <Link
+                        href="/login"
+                        className="flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-md shadow-slate-900/20 transition-all whitespace-nowrap active:scale-95"
+                      >
+                        <span>Sign In</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    )}
                   </div>
                 </div>
 

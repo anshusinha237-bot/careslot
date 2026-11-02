@@ -1,12 +1,19 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { useApp } from "../context/AppContext";
 import { AlertCircle, Clock, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 export default function LiveTicker() {
-  const { doctors } = useApp();
+  const pathname = usePathname();
+  const { doctors, currentUser } = useApp();
+
+  // Hide ticker on login/auth pages
+  if (pathname === "/login" || pathname?.startsWith("/login")) {
+    return null;
+  }
 
   const delayedDoctors = doctors.filter((d) => d.delay_minutes > 0);
 

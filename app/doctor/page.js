@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useApp } from "../../context/AppContext";
 import Navbar from "../../components/Navbar";
 import DoctorPrescriptionModal from "../../components/DoctorPrescriptionModal";
@@ -34,8 +35,10 @@ import {
 } from "lucide-react";
 
 export default function DoctorDashboardPage() {
+  const router = useRouter();
   const {
     currentUser,
+    isAuthLoading,
     switchRole,
     doctors,
     appointments,
@@ -49,11 +52,27 @@ export default function DoctorDashboardPage() {
     patientVitals,
   } = useApp();
 
+  // Redirect unauthenticated visitor to login
+  useEffect(() => {
+    if (!isAuthLoading && !currentUser) {
+      router.push("/login");
+    }
+  }, [isAuthLoading, currentUser, router]);
+
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
   const [prescribingPatient, setPrescribingPatient] = useState(null);
   const [historyPatient, setHistoryPatient] = useState(null);
   const [viewingRx, setViewingRx] = useState(null);
   const [prescriptionSuccess, setPrescriptionSuccess] = useState("");
+
+  // Loading state guard
+  if (isAuthLoading || !currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+      </div>
+    );
+  }
 
   // Determine active doctor: Selected from dropdown OR logged in doctor OR first doctor
   const activeDoctor =

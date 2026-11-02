@@ -15,7 +15,8 @@ import {
 const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(DEFAULT_USERS.patient);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [doctors, setDoctors] = useState(INITIAL_DOCTORS);
   const [departments, setDepartments] = useState(INITIAL_DEPARTMENTS);
   const [appointments, setAppointments] = useState(INITIAL_APPOINTMENTS);
@@ -87,21 +88,37 @@ export function AppProvider({ children }) {
     // LocalStorage fallback cache
     try {
       const savedUser = localStorage.getItem("careslot_user");
-      if (savedUser) setCurrentUser(JSON.parse(savedUser));
+      if (savedUser) {
+        const parsed = JSON.parse(savedUser);
+        if (parsed && (parsed.email || parsed.user_id)) {
+          setCurrentUser(parsed);
+        } else {
+          setCurrentUser(null);
+        }
+      } else {
+        setCurrentUser(null);
+      }
     } catch (e) {
       console.error(e);
+      setCurrentUser(null);
+    } finally {
+      setIsAuthLoading(false);
     }
   }, []);
 
   // Save user changes to localStorage
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient || isAuthLoading) return;
     try {
-      localStorage.setItem("careslot_user", JSON.stringify(currentUser));
+      if (currentUser) {
+        localStorage.setItem("careslot_user", JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem("careslot_user");
+      }
       localStorage.setItem("careslot_doctors", JSON.stringify(doctors));
       localStorage.setItem("careslot_appointments", JSON.stringify(appointments));
     } catch (e) {}
-  }, [currentUser, doctors, appointments, isClient]);
+  }, [currentUser, doctors, appointments, isClient, isAuthLoading]);
 
   // Switch demo persona (Patient, Doctor, Admin)
   const switchRole = (roleKey) => {
@@ -229,6 +246,9 @@ export function AppProvider({ children }) {
 
   const logout = () => {
     setCurrentUser(null);
+    try {
+      localStorage.removeItem("careslot_user");
+    } catch (e) {}
   };
 
   const register = async (fullName, email, phone, password, extraData = {}) => {
@@ -700,6 +720,7 @@ export function AppProvider({ children }) {
     <AppContext.Provider
       value={{
         currentUser,
+        isAuthLoading,
         dbStatus,
         switchRole,
         login,

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useApp } from "../../context/AppContext";
 import Navbar from "../../components/Navbar";
 import {
@@ -37,9 +38,12 @@ import {
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
   const {
     currentUser,
+    isAuthLoading,
     switchRole,
+    logout,
     doctors,
     departments,
     appointments,
@@ -464,9 +468,12 @@ export default function AdminDashboardPage() {
 
             <div className="flex items-center gap-2">
               <button
-                onClick={() => switchRole("patient")}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
-                title="Lock Admin Panel"
+                onClick={() => {
+                  logout();
+                  router.push("/login");
+                }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                title="Lock Admin Panel & Sign Out"
               >
                 <Lock className="w-3.5 h-3.5 text-slate-500" />
                 <span>Lock Panel</span>

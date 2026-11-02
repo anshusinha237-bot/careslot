@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useApp } from "../../context/AppContext";
 import Navbar from "../../components/Navbar";
 import PrintableTokenSlip from "../../components/PrintableTokenSlip";
@@ -44,8 +45,10 @@ import {
 } from "lucide-react";
 
 export default function PatientDashboardPage() {
+  const router = useRouter();
   const {
     currentUser,
+    isAuthLoading,
     appointments,
     doctors,
     cancelAppointment,
@@ -57,6 +60,13 @@ export default function PatientDashboardPage() {
     notifications,
   } = useApp();
 
+  // Redirect unauthenticated visitor to login
+  useEffect(() => {
+    if (!isAuthLoading && !currentUser) {
+      router.push("/login");
+    }
+  }, [isAuthLoading, currentUser, router]);
+
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedSlip, setSelectedSlip] = useState(null);
   const [selectedRx, setSelectedRx] = useState(null);
@@ -65,6 +75,15 @@ export default function PatientDashboardPage() {
   const [cancellingApp, setCancellingApp] = useState(null);
   const [reschedulingApp, setReschedulingApp] = useState(null);
   const [actionBanner, setActionBanner] = useState("");
+
+  // Prevent rendering if not authenticated
+  if (isAuthLoading || !currentUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+      </div>
+    );
+  }
 
   // Patient identification
   const patientId = currentUser ? currentUser.user_id : 1;

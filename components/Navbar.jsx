@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "../context/AppContext";
 import {
   Activity,
@@ -25,9 +25,39 @@ import {
 
 export default function Navbar({ onOpenSymptomChecker } = {}) {
   const pathname = usePathname();
-  const { currentUser, switchRole, logout } = useApp();
+  const router = useRouter();
+  const { currentUser, isAuthLoading, switchRole, logout } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    setRoleMenuOpen(false);
+    setMobileMenuOpen(false);
+    router.push("/login");
+  };
+
+  // Requirement 8: Ensure the navbar does not briefly appear while authentication status is loading
+  if (isAuthLoading) {
+    return null;
+  }
+
+  // Requirement 5: Do not display the navbar on the Login, Register, Forgot Password, or public auth pages
+  const isPublicAuthPage =
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/forgot-password" ||
+    pathname?.startsWith("/login");
+
+  if (isPublicAuthPage) {
+    return null;
+  }
+
+  // Requirement 1 & 2: Navbar is completely hidden when a user visits without logging in;
+  // displayed exclusively after the user successfully logs in
+  if (!currentUser) {
+    return null;
+  }
 
   // Role-based navigation links
   // Requirement: Home, Find Doctors, Live Queue, Appointments, Patient Portal, Contact Us
@@ -324,11 +354,11 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
                   </div>
                 </Link>
 
-                {/* Logout Icon Button */}
+                {/* Logout Icon Button (Requirement 4: immediately hides navbar and redirects to /login) */}
                 <button
                   type="button"
-                  onClick={logout}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all"
+                  onClick={handleLogout}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all cursor-pointer"
                   title="Sign Out"
                 >
                   <LogOut className="w-3.5 h-3.5" />
@@ -428,8 +458,8 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
               </div>
               <button
                 type="button"
-                onClick={logout}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors border border-rose-200"
+                onClick={handleLogout}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors border border-rose-200 cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Logout</span>
