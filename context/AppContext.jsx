@@ -6,6 +6,10 @@ import {
   INITIAL_DOCTORS,
   INITIAL_APPOINTMENTS,
   DEFAULT_USERS,
+  INITIAL_PRESCRIPTIONS,
+  INITIAL_LAB_REPORTS,
+  INITIAL_INVOICES,
+  PATIENT_VITALS,
 } from "../data/initialData";
 
 const AppContext = createContext(null);
@@ -15,6 +19,10 @@ export function AppProvider({ children }) {
   const [doctors, setDoctors] = useState(INITIAL_DOCTORS);
   const [departments, setDepartments] = useState(INITIAL_DEPARTMENTS);
   const [appointments, setAppointments] = useState(INITIAL_APPOINTMENTS);
+  const [prescriptions, setPrescriptions] = useState(INITIAL_PRESCRIPTIONS);
+  const [labReports, setLabReports] = useState(INITIAL_LAB_REPORTS);
+  const [invoices, setInvoices] = useState(INITIAL_INVOICES);
+  const [patientVitals, setPatientVitals] = useState(PATIENT_VITALS);
   const [dbStatus, setDbStatus] = useState({ connected: false, checked: false });
   const [notifications, setNotifications] = useState([
     {
@@ -585,6 +593,22 @@ export function AppProvider({ children }) {
     }).catch(() => {});
   };
 
+  const addPrescription = (prescriptionData) => {
+    const newPrescription = {
+      prescription_id: `RX-${Date.now().toString().slice(-4)}`,
+      date: new Date().toISOString().split("T")[0],
+      is_active: true,
+      ...prescriptionData,
+    };
+    setPrescriptions((prev) => [newPrescription, ...prev]);
+    addNotification({
+      type: "success",
+      title: "New E-Prescription Issued",
+      message: `${prescriptionData.doctor_name || "Doctor"} generated a verified digital prescription for ${prescriptionData.patient_name || "Patient"}.`,
+    });
+    return newPrescription;
+  };
+
   // Add Doctor via API (TC-15)
   const addDoctor = (newDoc) => {
     const dept = departments.find((d) => d.dept_id === Number(newDoc.dept_id));
@@ -688,6 +712,11 @@ export function AppProvider({ children }) {
         doctors,
         departments,
         appointments,
+        prescriptions,
+        addPrescription,
+        labReports,
+        invoices,
+        patientVitals,
         notifications,
         addNotification,
         removeNotification,

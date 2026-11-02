@@ -19,6 +19,8 @@ import {
   FileCheck2,
   Sparkles,
   ArrowRight,
+  Home,
+  PhoneCall,
 } from "lucide-react";
 
 export default function Navbar({ onOpenSymptomChecker } = {}) {
@@ -28,33 +30,35 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
 
   // Role-based navigation links
-  // Doctor Role: Strictly streamlined to clinical essentials (Doctor Console ONLY)
-  // Patient Role: Patient-facing links (Find Doctors, Live Queue, Patient Portal)
-  // Admin Role: Full platform access
+  // Requirement: Home, Find Doctors, Live Queue, Appointments, Patient Portal, Contact Us
+  // Plus role-specific consoles (Doctor Console for doctors, Admin Panel for admin)
   const navLinks = useMemo(() => {
     const role = currentUser?.role || "patient";
 
+    const baseLinks = [
+      { name: "Home", href: "/", icon: Home },
+      { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
+      { name: "Live Queue", href: "/queue", icon: Clock },
+      { name: "Appointments", href: "/appointments", icon: Calendar },
+      { name: "Patient Portal", href: "/patient", icon: User },
+      { name: "Contact Us", href: "/contact", icon: PhoneCall },
+    ];
+
     if (role === "doctor") {
-      return [{ name: "Doctor Console", href: "/doctor", icon: Activity }];
+      return [
+        ...baseLinks,
+        { name: "Doctor Console", href: "/doctor", icon: Activity, highlight: true },
+      ];
     }
 
     if (role === "admin") {
       return [
-        { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
-        { name: "Live Queue", href: "/queue", icon: Clock },
-        { name: "Patient Portal", href: "/patient", icon: Calendar },
-        { name: "Doctor Console", href: "/doctor", icon: Activity },
-        { name: "Admin Panel", href: "/admin", icon: Shield },
-        { name: "QA Tests", href: "/tests", icon: FileCheck2 },
+        ...baseLinks,
+        { name: "Admin Panel", href: "/admin", icon: Shield, highlight: true },
       ];
     }
 
-    // Default: Patient view (strictly patient-facing links)
-    return [
-      { name: "Find Doctors", href: "/doctors", icon: Stethoscope },
-      { name: "Live Queue", href: "/queue", icon: Clock },
-      { name: "Patient Portal", href: "/patient", icon: Calendar },
-    ];
+    return baseLinks;
   }, [currentUser?.role]);
 
   const handleRoleSwitch = (role) => {
@@ -112,7 +116,7 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
           {/* =========================================
               CENTER: Modern Capsule Navigation Links
           ========================================= */}
-          <nav className="hidden md:flex items-center p-1 bg-slate-100/80 rounded-full border border-slate-200/70 shadow-inner max-w-fit mx-2 lg:mx-4">
+          <nav className="hidden lg:flex items-center p-1 bg-slate-100/80 rounded-full border border-slate-200/70 shadow-inner max-w-fit mx-2">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = pathname === link.href;
@@ -120,15 +124,21 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all duration-150 ${
+                  className={`flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-full text-xs transition-all duration-150 ${
                     isActive
                       ? "text-blue-800 bg-white font-bold shadow-xs border border-slate-200/70 ring-1 ring-blue-500/10"
+                      : link.highlight
+                      ? "text-indigo-700 bg-indigo-50/80 hover:bg-white font-semibold"
                       : "text-slate-600 hover:text-slate-900 hover:bg-white/60 font-semibold"
                   }`}
                 >
                   <Icon
                     className={`w-3.5 h-3.5 transition-colors ${
-                      isActive ? "text-blue-600 stroke-[2.4]" : "text-slate-400 stroke-[1.8]"
+                      isActive
+                        ? "text-blue-600 stroke-[2.4]"
+                        : link.highlight
+                        ? "text-indigo-600 stroke-[2]"
+                        : "text-slate-400 stroke-[1.8]"
                     }`}
                   />
                   <span>{link.name}</span>
@@ -337,7 +347,7 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
           {/* =========================================
               MOBILE: Hamburger Menu Button
           ========================================= */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -354,7 +364,7 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
           MOBILE: Responsive Navigation Drawer
       ========================================= */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200/80 bg-white/98 backdrop-blur-xl px-4 pt-3 pb-5 space-y-4 animate-in fade-in duration-150">
+        <div className="lg:hidden border-t border-slate-200/80 bg-white/98 backdrop-blur-xl px-4 pt-3 pb-5 space-y-4 animate-in fade-in duration-150">
           {/* Mobile Nav Links */}
           <div className="space-y-1">
             {navLinks.map((link) => {

@@ -3,6 +3,7 @@ import { AppProvider } from "../context/AppContext";
 import LiveTicker from "../components/LiveTicker";
 import Footer from "../components/Footer";
 import NotificationToast from "../components/NotificationToast";
+import AiHealthChatbot from "../components/AiHealthChatbot";
 
 export const metadata = {
   title: "CareSlot - Real-Time Doctor Availability & OPD Appointment System",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
           <div className="flex-1 flex flex-col">{children}</div>
           <Footer />
           <NotificationToast />
+          <AiHealthChatbot />
         </AppProvider>
       </body>
     </html>

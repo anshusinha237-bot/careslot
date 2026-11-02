@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "../../context/AppContext";
 import Navbar from "../../components/Navbar";
+import DoctorPrescriptionModal from "../../components/DoctorPrescriptionModal";
+import PatientMedicalHistoryModal from "../../components/PatientMedicalHistoryModal";
+import PrintablePrescriptionModal from "../../components/PrintablePrescriptionModal";
 import {
   Activity,
   Clock,
@@ -21,6 +24,13 @@ import {
   Volume2,
   Stethoscope,
   Sparkles,
+  Pill,
+  HeartPulse,
+  History,
+  TrendingUp,
+  Receipt,
+  Printer,
+  ChevronDown,
 } from "lucide-react";
 
 export default function DoctorDashboardPage() {
@@ -34,14 +44,24 @@ export default function DoctorDashboardPage() {
     clearDelay,
     callNextPatient,
     completeConsultation,
+    prescriptions,
+    addPrescription,
+    patientVitals,
   } = useApp();
 
-  // Find active doctor: If current user is doctor role, match user_id or doctor_id; otherwise default to Dr. Priya Sharma (101)
-  const activeDoctor =
-    doctors.find((d) => d.doctor_id === currentUser?.doctor_id || d.user_id === currentUser?.user_id) ||
-    doctors[0]; // Dr. Priya Sharma
+  const [selectedDoctorId, setSelectedDoctorId] = useState(null);
+  const [prescribingPatient, setPrescribingPatient] = useState(null);
+  const [historyPatient, setHistoryPatient] = useState(null);
+  const [viewingRx, setViewingRx] = useState(null);
+  const [prescriptionSuccess, setPrescriptionSuccess] = useState("");
 
-  // TC-05: RBAC Protection - Only Doctor or Admin can access
+  // Determine active doctor: Selected from dropdown OR logged in doctor OR first doctor
+  const activeDoctor =
+    doctors.find((d) => d.doctor_id === selectedDoctorId) ||
+    doctors.find((d) => d.doctor_id === currentUser?.doctor_id || d.user_id === currentUser?.user_id) ||
+    doctors[0];
+
+  // RBAC Protection - Only Doctor or Admin can access
   if (currentUser?.role === "patient") {
     return (
       <div className="min-h-screen flex flex-col bg-slate-50">
@@ -52,7 +72,7 @@ export default function DoctorDashboardPage() {
               <Shield className="w-7 h-7" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Doctor Terminal Restricted (TC-05)</h2>
+              <h2 className="text-xl font-bold text-slate-900">Doctor Terminal Restricted</h2>
               <p className="text-xs text-slate-500 mt-1">
                 You are currently signed in as a <strong>Patient</strong> ({currentUser.full_name}). The Doctor OPD Terminal is restricted to authorized medical staff.
               </p>
@@ -88,10 +108,15 @@ export default function DoctorDashboardPage() {
 
   // Appointments for this doctor
   const doctorAppointments = appointments.filter((a) => a.doctor_id === activeDoctor.doctor_id);
-  const todayAppointments = doctorAppointments.filter((a) => a.appointment_date === "2026-10-31");
+  const todayAppointments = doctorAppointments.filter((a) => a.appointment_date === "2026-10-31" || a.appointment_date === "2026-11-01" || a.appointment_date === "2026-11-02");
   const inProgressApp = todayAppointments.find((a) => a.status === "in-progress");
   const confirmedApps = todayAppointments.filter((a) => a.status === "confirmed");
   const completedApps = todayAppointments.filter((a) => a.status === "completed");
+
+  // Prescriptions issued by this doctor
+  const doctorPrescriptions = (prescriptions || []).filter(
+    (p) => p.doctor_id === activeDoctor.doctor_id || p.doctor_name === activeDoctor.full_name
+  );
 
   const handleBroadcastDelay = (e) => {
     e.preventDefault();
@@ -112,13 +137,19 @@ export default function DoctorDashboardPage() {
 
   const handleUpdateSchedule = (e) => {
     e.preventDefault();
-    setScheduleNotice("Working hours & consultation interval updated successfully (TC-13)!");
+    setScheduleNotice("Working hours & consultation interval updated successfully!");
     setTimeout(() => setScheduleNotice(""), 3500);
   };
 
   const handleFinishAndCallNext = (appId) => {
     completeConsultation(appId);
     callNextPatient(activeDoctor.doctor_id);
+  };
+
+  const handleSavePrescription = (prescriptionData) => {
+    addPrescription(prescriptionData);
+    setPrescriptionSuccess(`Prescription #${prescriptionData.prescription_id} issued and added to patient record.`);
+    setTimeout(() => setPrescriptionSuccess(""), 5000);
   };
 
   return (
@@ -131,9 +162,9 @@ export default function DoctorDashboardPage() {
       <div className="bg-white border-b border-slate-200 py-6 shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-            {/* Doctor Info */}
+            {/* Doctor Info & Switcher */}
             <div className="flex items-center gap-4">
-              <div className="w-13 h-13 rounded-2xl bg-blue-600 text-white font-bold text-lg flex items-center justify-center shadow-sm">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-xl flex items-center justify-center shadow-md shrink-0">
                 {activeDoctor.full_name
                   .split(" ")
                   .filter((n) => !n.startsWith("Dr."))
@@ -143,27 +174,43 @@ export default function DoctorDashboardPage() {
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[11px] font-bold text-blue-800 uppercase tracking-wider bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-200">
+                  <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                     Clinical Console
                   </span>
-                  <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                  <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
                     {activeDoctor.opd_room}
                   </span>
                   <span className="text-xs text-slate-400">• Fee: ₹{activeDoctor.consultation_fee}</span>
                 </div>
-                <h1 className="text-2xl font-black text-slate-900 mt-1">
-                  {activeDoctor.full_name}
-                </h1>
+                <div className="flex items-center gap-2 mt-1">
+                  <h1 className="text-2xl font-black text-slate-900">
+                    {activeDoctor.full_name}
+                  </h1>
+
+                  {/* Doctor Terminal Selector for QA / Testing */}
+                  <select
+                    value={activeDoctor.doctor_id}
+                    onChange={(e) => setSelectedDoctorId(Number(e.target.value))}
+                    className="ml-2 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-xl px-2.5 py-1 focus:outline-none cursor-pointer"
+                    title="Switch doctor console view"
+                  >
+                    {doctors.map((doc) => (
+                      <option key={doc.doctor_id} value={doc.doctor_id}>
+                        {doc.full_name} ({doc.dept_name})
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <p className="text-xs text-slate-500 font-medium">
                   {activeDoctor.qualification} • {activeDoctor.dept_name} • Shift: {activeDoctor.shift_hours}
                 </p>
               </div>
             </div>
 
-            {/* LIVE STATUS TOGGLE (Clinical Workflow Essential) */}
-            <div className="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center gap-2.5">
+            {/* LIVE STATUS TOGGLE */}
+            <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center gap-2.5">
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">
-                Live Status:
+                Consultation Status:
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {[
@@ -195,23 +242,41 @@ export default function DoctorDashboardPage() {
         </div>
       </div>
 
+      {/* Prescription Success Toast */}
+      {prescriptionSuccess && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 w-full">
+          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-900 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>{prescriptionSuccess}</span>
+            </div>
+            <button
+              onClick={() => setPrescriptionSuccess("")}
+              className="text-emerald-700 hover:text-emerald-900"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* =========================================
           MAIN CLINICAL WORKFLOW TERMINAL
       ========================================= */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
         {/* KPI Strip: Today's Clinical Snapshot */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+          <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-xs">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-              Total OPD Roster Today
+              Total Patients Today
             </span>
             <span className="text-2xl font-black text-slate-900 mt-1 block">
-              {todayAppointments.length} Patients
+              {todayAppointments.length} Consultations
             </span>
             <span className="text-[10px] text-emerald-700 font-semibold">Registered tokens</span>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+          <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-xs">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               Completed Consultations
             </span>
@@ -221,7 +286,7 @@ export default function DoctorDashboardPage() {
             <span className="text-[10px] text-slate-500 font-medium">Examined &amp; discharged</span>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+          <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-xs">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               Waiting in Queue
             </span>
@@ -231,23 +296,23 @@ export default function DoctorDashboardPage() {
             <span className="text-[10px] text-slate-500 font-medium">Outside OPD door</span>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+          <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-xs">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               Current Serving Token
             </span>
-            <span className="text-2xl font-black text-emerald-700 mt-1 block font-mono">
+            <span className="text-2xl font-black text-blue-700 mt-1 block font-mono">
               #{activeDoctor.current_token_serving}
             </span>
             <span className="text-[10px] text-slate-500 font-medium">Next in line: #{activeDoctor.next_token}</span>
           </div>
         </div>
 
-        {/* BROADCAST EMERGENCY DELAY NOTICE (Clinical Essential) */}
-        <div className="bg-gradient-to-r from-amber-50 to-amber-100/40 border border-amber-300 rounded-2xl p-5 shadow-2xs">
+        {/* BROADCAST EMERGENCY DELAY NOTICE */}
+        <div className="bg-gradient-to-r from-amber-50 to-amber-100/40 border border-amber-300 rounded-3xl p-5 shadow-xs">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <AlertCircle className="w-4.5 h-4.5 text-amber-700 shrink-0" />
+                <AlertCircle className="w-5 h-5 text-amber-700 shrink-0" />
                 <h3 className="font-bold text-amber-950 text-sm">
                   Broadcast Emergency OPD Delay Notice
                 </h3>
@@ -304,7 +369,7 @@ export default function DoctorDashboardPage() {
           {/* =========================================
               LEFT (2 Cols): Active In-Room Consultation Console
           ========================================= */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs flex flex-col justify-between">
+          <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between">
             <div>
               {/* Header */}
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
@@ -341,30 +406,65 @@ export default function DoctorDashboardPage() {
                       </p>
                     </div>
 
-                    <div className="text-right">
-                      <span className="text-[10px] uppercase font-bold text-slate-500 block">TOKEN</span>
-                      <span className="text-3xl font-black font-mono text-blue-800">
-                        #{inProgressApp.token_number}
-                      </span>
+                    <div className="text-right flex flex-col items-end gap-2">
+                      <div className="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-center">
+                        <span className="text-[9px] uppercase font-bold block opacity-90">TOKEN</span>
+                        <span className="text-2xl font-black font-mono block">
+                          #{inProgressApp.token_number}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Reported Symptoms */}
-                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs">
-                    <span className="font-bold text-slate-700 block mb-1">Chief Symptoms &amp; Clinical Complaints:</span>
+                  {/* Reported Symptoms & Quick Action Bar */}
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-bold text-slate-700">Chief Symptoms &amp; Clinical Complaints:</span>
+                      <button
+                        type="button"
+                        onClick={() => setHistoryPatient(inProgressApp)}
+                        className="flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:underline"
+                      >
+                        <History className="w-3.5 h-3.5" />
+                        <span>View Past Medical History</span>
+                      </button>
+                    </div>
                     <p className="text-slate-600 italic leading-relaxed">{inProgressApp.symptoms}</p>
                   </div>
 
-                  {/* Clinical Notes & Prescription Advice */}
+                  {/* Quick Prescription & E-Pad Trigger */}
+                  <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
+                        <Pill className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-xs">Digital E-Prescription Pad</h4>
+                        <p className="text-[11px] text-slate-500">
+                          Prescribe medications, dosage schedules, and clinical advice.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPrescribingPatient(inProgressApp)}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+                    >
+                      <Pill className="w-3.5 h-3.5" />
+                      <span>Write Prescription</span>
+                    </button>
+                  </div>
+
+                  {/* Clinical Notes & Quick Finish */}
                   <form onSubmit={handleSaveNotes} className="space-y-3 pt-1">
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                      Doctor Clinical Notes &amp; Prescription Advice:
+                      OPD Clinical Notes &amp; Observations:
                     </label>
                     <textarea
-                      rows={3}
+                      rows={2}
                       value={consultationNotes}
                       onChange={(e) => setConsultationNotes(e.target.value)}
-                      placeholder="Enter clinical examination notes, vitals (BP/Pulse), and advised medication..."
+                      placeholder="Enter clinical examination notes, vitals (BP/Pulse), and advice..."
                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white font-medium"
                     />
                     <div className="flex items-center justify-between gap-3 pt-1">
@@ -377,14 +477,14 @@ export default function DoctorDashboardPage() {
                       <button
                         type="button"
                         onClick={() => handleFinishAndCallNext(inProgressApp.appointment_id)}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5"
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Finish &amp; Call Next</span>
+                        <span>Finish Consultation &amp; Call Next</span>
                       </button>
                     </div>
                     {prescriptionSaved && (
-                      <p className="text-xs text-blue-600 font-bold flex items-center gap-1">
+                      <p className="text-xs text-emerald-600 font-bold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Notes stored in patient digital health record.
                       </p>
                     )}
@@ -392,15 +492,15 @@ export default function DoctorDashboardPage() {
                 </div>
               ) : (
                 <div className="py-12 text-center text-slate-500">
-                  <Activity className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                  <p className="font-bold text-slate-800 text-sm">No Patient Currently Inside</p>
+                  <Activity className="w-12 h-12 text-slate-300 mx-auto mb-2" />
+                  <p className="font-bold text-slate-800 text-base">No Patient Currently Inside</p>
                   <p className="text-xs text-slate-400 mt-1 mb-4">
-                    The consultation room is clear. Click below to call Token #{activeDoctor.next_token} inside.
+                    The consultation room is clear. Click below to announce Token #{activeDoctor.next_token} inside.
                   </p>
                   <button
                     type="button"
                     onClick={() => callNextPatient(activeDoctor.doctor_id)}
-                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-600/20 transition-all"
                   >
                     Call Next Token (#{activeDoctor.next_token})
                   </button>
@@ -412,12 +512,12 @@ export default function DoctorDashboardPage() {
           {/* =========================================
               RIGHT (1 Col): Working Hours & Consultation Interval
           ========================================= */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-2xs flex flex-col justify-between">
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100">
                 <Clock className="w-4 h-4 text-blue-600" />
                 <h3 className="font-bold text-slate-900 text-sm">
-                  Working Hours &amp; Interval
+                  Working Hours &amp; Shift Interval
                 </h3>
               </div>
 
@@ -483,13 +583,62 @@ export default function DoctorDashboardPage() {
         </div>
 
         {/* =========================================
+            DOCTOR'S PRESCRIPTION MANAGEMENT STRIP
+        ========================================= */}
+        {doctorPrescriptions.length > 0 && (
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Pill className="w-5 h-5 text-blue-600" />
+                <h3 className="font-bold text-slate-900 text-sm">
+                  Recently Issued Digital Prescriptions ({doctorPrescriptions.length})
+                </h3>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {doctorPrescriptions.map((rx) => (
+                <div
+                  key={rx.prescription_id}
+                  className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between text-xs"
+                >
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono font-bold text-slate-500">{rx.prescription_id}</span>
+                      <span className="font-mono text-slate-400 text-[11px]">{rx.date}</span>
+                    </div>
+                    <h4 className="font-bold text-slate-900 mt-1">{rx.patient_name}</h4>
+                    <p className="text-blue-600 text-[11px] font-medium">{rx.diagnosis}</p>
+                    <p className="text-slate-500 text-[11px] mt-1">
+                      {rx.medicines?.length || 0} Prescribed Medicines
+                    </p>
+                  </div>
+                  <div className="pt-3 mt-3 border-t border-slate-200 flex items-center justify-between">
+                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">
+                      Active
+                    </span>
+                    <button
+                      onClick={() => setViewingRx(rx)}
+                      className="text-blue-600 font-bold hover:underline flex items-center gap-1"
+                    >
+                      <Printer className="w-3 h-3" />
+                      <span>View Slip</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* =========================================
             TODAY'S FULL SCHEDULE / WAITING BOARD
         ========================================= */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs">
+        <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
           <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
             <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
               <Users className="w-4 h-4 text-blue-600" />
-              <span>Today&apos;s Full Schedule / Waiting Board (2026-10-31)</span>
+              <span>Today&apos;s Full Patient Roster &amp; Queue Management</span>
             </h3>
             <span className="text-xs text-slate-500 font-medium">
               {todayAppointments.length} Total Patients Registered
@@ -506,7 +655,7 @@ export default function DoctorDashboardPage() {
                   <th className="py-3 px-4">Contact Phone</th>
                   <th className="py-3 px-4">Chief Complaint</th>
                   <th className="py-3 px-4">Queue Status</th>
-                  <th className="py-3 px-4 text-right">Clinical Action</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -515,7 +664,16 @@ export default function DoctorDashboardPage() {
                     <td className="py-3 px-4 font-mono font-black text-sm text-slate-900">
                       #{app.token_number}
                     </td>
-                    <td className="py-3 px-4 font-bold text-slate-900">{app.patient_name}</td>
+                    <td className="py-3 px-4">
+                      <p className="font-bold text-slate-900">{app.patient_name}</p>
+                      <button
+                        type="button"
+                        onClick={() => setHistoryPatient(app)}
+                        className="text-[10px] text-blue-600 hover:underline"
+                      >
+                        View History
+                      </button>
+                    </td>
                     <td className="py-3 px-4 font-medium text-blue-700 font-mono">{app.appointment_time}</td>
                     <td className="py-3 px-4 font-mono text-slate-600">{app.patient_phone}</td>
                     <td className="py-3 px-4 italic text-slate-500 max-w-[220px] truncate">
@@ -529,7 +687,7 @@ export default function DoctorDashboardPage() {
                             : app.status === "confirmed"
                             ? "bg-blue-100 text-blue-800 border border-blue-200"
                             : app.status === "completed"
-                            ? "bg-blue-50 text-blue-700 border border-blue-200"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                             : "bg-slate-100 text-slate-600"
                         }`}
                       >
@@ -541,30 +699,40 @@ export default function DoctorDashboardPage() {
                       </span>
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {app.status === "confirmed" && (
+                      <div className="flex items-center justify-end gap-1.5">
                         <button
                           type="button"
-                          onClick={() => callNextPatient(activeDoctor.doctor_id)}
-                          className="px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg font-bold text-[11px] border border-blue-200 transition-colors"
+                          onClick={() => setPrescribingPatient(app)}
+                          className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg font-bold text-[11px] border border-blue-200"
+                          title="Write prescription"
                         >
-                          Call In
+                          Rx
                         </button>
-                      )}
-                      {app.status === "in-progress" && (
-                        <button
-                          type="button"
-                          onClick={() => completeConsultation(app.appointment_id)}
-                          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-[11px] shadow-2xs transition-colors"
-                        >
-                          Finish
-                        </button>
-                      )}
-                      {app.status === "completed" && (
-                        <span className="text-[11px] text-slate-400 font-semibold flex items-center justify-end gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                          <span>Finished</span>
-                        </span>
-                      )}
+                        {app.status === "confirmed" && (
+                          <button
+                            type="button"
+                            onClick={() => callNextPatient(activeDoctor.doctor_id)}
+                            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-[11px] transition-colors"
+                          >
+                            Call In
+                          </button>
+                        )}
+                        {app.status === "in-progress" && (
+                          <button
+                            type="button"
+                            onClick={() => completeConsultation(app.appointment_id)}
+                            className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[11px] shadow-2xs transition-colors"
+                          >
+                            Finish
+                          </button>
+                        )}
+                        {app.status === "completed" && (
+                          <span className="text-[11px] text-slate-400 font-semibold flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Seen</span>
+                          </span>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -573,6 +741,35 @@ export default function DoctorDashboardPage() {
           </div>
         </div>
       </main>
+
+      {/* Doctor Prescription Pad Modal */}
+      {prescribingPatient && (
+        <DoctorPrescriptionModal
+          doctor={activeDoctor}
+          patient={prescribingPatient}
+          onClose={() => setPrescribingPatient(null)}
+          onSavePrescription={handleSavePrescription}
+        />
+      )}
+
+      {/* Patient Medical History Modal */}
+      {historyPatient && (
+        <PatientMedicalHistoryModal
+          patient={historyPatient}
+          appointments={appointments}
+          prescriptions={prescriptions}
+          vitals={patientVitals}
+          onClose={() => setHistoryPatient(null)}
+        />
+      )}
+
+      {/* Printable Prescription Modal */}
+      {viewingRx && (
+        <PrintablePrescriptionModal
+          prescription={viewingRx}
+          onClose={() => setViewingRx(null)}
+        />
+      )}
     </div>
   );
 }
