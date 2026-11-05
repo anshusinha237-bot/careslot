@@ -53,18 +53,32 @@ export default function DoctorDashboardPage() {
     patientVitals,
   } = useApp();
 
+  const [selectedDoctorId, setSelectedDoctorId] = useState(null);
+
+  // Determine active doctor: Selected from dropdown OR logged in doctor OR first doctor
+  const activeDoctor =
+    doctors.find((d) => d.doctor_id === selectedDoctorId) ||
+    doctors.find((d) => d.doctor_id === currentUser?.doctor_id || d.user_id === currentUser?.user_id) ||
+    doctors[0] || {};
+
+  const [prescribingPatient, setPrescribingPatient] = useState(null);
+  const [historyPatient, setHistoryPatient] = useState(null);
+  const [viewingRx, setViewingRx] = useState(null);
+  const [prescriptionSuccess, setPrescriptionSuccess] = useState("");
+  const [delayInput, setDelayInput] = useState(activeDoctor.delay_minutes || 20);
+  const [delayReason, setDelayReason] = useState(activeDoctor.delay_reason || "Emergency procedural case in OT");
+  const [consultationNotes, setConsultationNotes] = useState("");
+  const [prescriptionSaved, setPrescriptionSaved] = useState(false);
+  const [scheduleShiftHours, setScheduleShiftHours] = useState(activeDoctor.shift_hours || "09:00 AM - 01:30 PM");
+  const [consultationInterval, setConsultationInterval] = useState("15 Minutes");
+  const [scheduleNotice, setScheduleNotice] = useState("");
+
   // Redirect unauthenticated visitor to login
   useEffect(() => {
     if (!isAuthLoading && !currentUser) {
       router.push("/login");
     }
   }, [isAuthLoading, currentUser, router]);
-
-  const [selectedDoctorId, setSelectedDoctorId] = useState(null);
-  const [prescribingPatient, setPrescribingPatient] = useState(null);
-  const [historyPatient, setHistoryPatient] = useState(null);
-  const [viewingRx, setViewingRx] = useState(null);
-  const [prescriptionSuccess, setPrescriptionSuccess] = useState("");
 
   // Loading state guard
   if (isAuthLoading || !currentUser) {
@@ -74,12 +88,6 @@ export default function DoctorDashboardPage() {
       </div>
     );
   }
-
-  // Determine active doctor: Selected from dropdown OR logged in doctor OR first doctor
-  const activeDoctor =
-    doctors.find((d) => d.doctor_id === selectedDoctorId) ||
-    doctors.find((d) => d.doctor_id === currentUser?.doctor_id || d.user_id === currentUser?.user_id) ||
-    doctors[0];
 
   // RBAC Protection - Only Doctor or Admin can access
   if (currentUser?.role === "patient") {
@@ -117,14 +125,6 @@ export default function DoctorDashboardPage() {
       </div>
     );
   }
-
-  const [delayInput, setDelayInput] = useState(activeDoctor.delay_minutes || 20);
-  const [delayReason, setDelayReason] = useState(activeDoctor.delay_reason || "Emergency procedural case in OT");
-  const [consultationNotes, setConsultationNotes] = useState("");
-  const [prescriptionSaved, setPrescriptionSaved] = useState(false);
-  const [scheduleShiftHours, setScheduleShiftHours] = useState(activeDoctor.shift_hours || "09:00 AM - 01:30 PM");
-  const [consultationInterval, setConsultationInterval] = useState("15 Minutes");
-  const [scheduleNotice, setScheduleNotice] = useState("");
 
   // Appointments for this doctor
   const doctorAppointments = appointments.filter((a) => a.doctor_id === activeDoctor.doctor_id);

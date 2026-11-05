@@ -26,6 +26,17 @@ export default function DoctorsDirectoryPage() {
   const router = useRouter();
   const { doctors, departments, currentUser, isAuthLoading } = useApp();
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDept, setSelectedDept] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [sortBy, setSortBy] = useState("default");
+  const [bookingDoctor, setBookingDoctor] = useState(null);
+  const [bookingSlot, setBookingSlot] = useState("");
+  const [confirmedAppointment, setConfirmedAppointment] = useState(null);
+  const [isSymptomCheckerOpen, setIsSymptomCheckerOpen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncText, setLastSyncText] = useState("Live Just Now");
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthLoading && !currentUser) {
@@ -40,16 +51,6 @@ export default function DoctorsDirectoryPage() {
       </div>
     );
   }
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDept, setSelectedDept] = useState("All");
-  const [selectedStatus, setSelectedStatus] = useState("All");
-  const [sortBy, setSortBy] = useState("default");
-  const [bookingDoctor, setBookingDoctor] = useState(null);
-  const [bookingSlot, setBookingSlot] = useState("");
-  const [confirmedAppointment, setConfirmedAppointment] = useState(null);
-  const [isSymptomCheckerOpen, setIsSymptomCheckerOpen] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [lastSyncText, setLastSyncText] = useState("Live Just Now");
 
   // Handle Manual Refresh (Requirement 3)
   const handleManualSync = () => {

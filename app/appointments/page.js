@@ -43,6 +43,17 @@ export default function AppointmentsPage() {
     isAuthLoading,
   } = useApp();
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDept, setSelectedDept] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [selectedDoctorForBooking, setSelectedDoctorForBooking] = useState(null);
+
+  const [selectedSlip, setSelectedSlip] = useState(null);
+  const [cancellingApp, setCancellingApp] = useState(null);
+  const [reschedulingApp, setReschedulingApp] = useState(null);
+  const [actionNotice, setActionNotice] = useState("");
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthLoading && !currentUser) {
@@ -57,17 +68,6 @@ export default function AppointmentsPage() {
       </div>
     );
   }
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDept, setSelectedDept] = useState("All");
-  const [selectedStatus, setSelectedStatus] = useState("All");
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [selectedDoctorForBooking, setSelectedDoctorForBooking] = useState(null);
-
-  const [selectedSlip, setSelectedSlip] = useState(null);
-  const [cancellingApp, setCancellingApp] = useState(null);
-  const [reschedulingApp, setReschedulingApp] = useState(null);
-  const [actionNotice, setActionNotice] = useState("");
 
   // Filter appointments
   const filteredAppointments = appointments.filter((app) => {

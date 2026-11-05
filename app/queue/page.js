@@ -23,6 +23,11 @@ export default function LiveQueueBoardPage() {
   const router = useRouter();
   const { doctors, appointments, currentUser, isAuthLoading } = useApp();
 
+  const [tokenSearch, setTokenSearch] = useState("");
+  const [patientLookupResult, setPatientLookupResult] = useState(null);
+  const [chimeMessage, setChimeMessage] = useState("");
+  const [selectedFloor, setSelectedFloor] = useState("All");
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthLoading && !currentUser) {
@@ -37,11 +42,6 @@ export default function LiveQueueBoardPage() {
       </div>
     );
   }
-
-  const [tokenSearch, setTokenSearch] = useState("");
-  const [patientLookupResult, setPatientLookupResult] = useState(null);
-  const [chimeMessage, setChimeMessage] = useState("");
-  const [selectedFloor, setSelectedFloor] = useState("All");
 
   const handleLookupToken = (e) => {
     e.preventDefault();

@@ -53,21 +53,6 @@ export default function AdminDashboardPage() {
     verifyAdminOtp,
   } = useApp();
 
-  // Auth Guard: Admin access only
-  useEffect(() => {
-    if (!isAuthLoading && (!currentUser || currentUser.role !== "admin")) {
-      router.push("/login");
-    }
-  }, [isAuthLoading, currentUser, router]);
-
-  if (isAuthLoading || !currentUser || currentUser.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
-      </div>
-    );
-  }
-
   const [activeTab, setActiveTab] = useState("analytics"); // analytics, patients, doctors, staff, bookings, departments, security
   const [showAddDoctorModal, setShowAddDoctorModal] = useState(false);
   const [showAddDeptModal, setShowAddDeptModal] = useState(false);
@@ -154,6 +139,21 @@ export default function AdminDashboardPage() {
       status: "On-Duty",
     },
   ]);
+
+  // Auth Guard: Admin access only
+  useEffect(() => {
+    if (!isAuthLoading && (!currentUser || currentUser.role !== "admin")) {
+      router.push("/login");
+    }
+  }, [isAuthLoading, currentUser, router]);
+
+  if (isAuthLoading || !currentUser || currentUser.role !== "admin") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+      </div>
+    );
+  }
 
   // Registered Patients Directory
   const registeredPatients = [
