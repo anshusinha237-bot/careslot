@@ -30,36 +30,7 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    setRoleMenuOpen(false);
-    setMobileMenuOpen(false);
-    router.push("/login");
-  };
-
-  // Requirement 8: Ensure the navbar does not briefly appear while authentication status is loading
-  if (isAuthLoading) {
-    return null;
-  }
-
-  // Requirement 5: Do not display the navbar on the Login, Register, Forgot Password, or public auth pages
-  const isPublicAuthPage =
-    pathname === "/login" ||
-    pathname === "/register" ||
-    pathname === "/forgot-password" ||
-    pathname?.startsWith("/login");
-
-  if (isPublicAuthPage) {
-    return null;
-  }
-
-  // Requirement 1 & 2: Navbar is completely hidden when a user visits without logging in;
-  // displayed exclusively after the user successfully logs in
-  if (!currentUser) {
-    return null;
-  }
-
-  // Role-based navigation links
+  // Role-based navigation links (must be called unconditionally at top level to satisfy Rules of Hooks)
   // Requirement: Home, Find Doctors, Live Queue, Appointments, Patient Portal, Contact Us
   // Plus role-specific consoles (Doctor Console for doctors, Admin Panel for admin)
   const navLinks = useMemo(() => {
@@ -104,6 +75,35 @@ export default function Navbar({ onOpenSymptomChecker } = {}) {
 
     return baseLinks;
   }, [currentUser?.role]);
+
+  const handleLogout = () => {
+    logout();
+    setRoleMenuOpen(false);
+    setMobileMenuOpen(false);
+    router.push("/login");
+  };
+
+  // Requirement 8: Ensure the navbar does not briefly appear while authentication status is loading
+  if (isAuthLoading) {
+    return null;
+  }
+
+  // Requirement 5: Do not display the navbar on the Login, Register, Forgot Password, or public auth pages
+  const isPublicAuthPage =
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/forgot-password" ||
+    pathname?.startsWith("/login");
+
+  if (isPublicAuthPage) {
+    return null;
+  }
+
+  // Requirement 1 & 2: Navbar is completely hidden when a user visits without logging in;
+  // displayed exclusively after the user successfully logs in
+  if (!currentUser) {
+    return null;
+  }
 
   const handleRoleSwitch = (role) => {
     switchRole(role);

@@ -21,14 +21,12 @@ export default function CancellationModal({
   onConfirmCancel,
   onSwitchToReschedule,
 }) {
-  if (!appointment) return null;
-
-  const fee = appointment.fee || 500;
+  const fee = appointment?.fee || 500;
 
   // Calculate actual hours remaining between current time and scheduled appointment
   const calculateActualHours = () => {
     try {
-      if (!appointment.appointment_date) return 9; // default >8h for demo
+      if (!appointment?.appointment_date) return 9; // default >8h for demo
       const dateStr = appointment.appointment_date;
       const timeStr = appointment.appointment_time || "10:00 AM";
 
@@ -119,6 +117,8 @@ export default function CancellationModal({
       };
     }
   }, [selectedTier, fee]);
+
+  if (!appointment) return null;
 
   const handleConfirm = () => {
     setIsProcessing(true);

@@ -20,8 +20,6 @@ export default function RescheduleModal({
   onClose,
   onConfirmReschedule,
 }) {
-  if (!appointment) return null;
-
   // Tomorrow as default new date
   const tomorrowStr = (() => {
     const d = new Date();
@@ -43,11 +41,13 @@ export default function RescheduleModal({
     "03:00 PM",
   ];
   const [selectedSlot, setSelectedSlot] = useState(
-    availableSlots.find((s) => s !== appointment.appointment_time) || availableSlots[0]
+    availableSlots.find((s) => s !== appointment?.appointment_time) || availableSlots[0]
   );
   const [reason, setReason] = useState("Personal Schedule Conflict");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  if (!appointment) return null;
 
   const todayStr = new Date().toISOString().split("T")[0];
 
