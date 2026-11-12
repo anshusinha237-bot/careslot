@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { DEFAULT_USERS } from "../../../data/initialData";
+import { prisma } from "../../../lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -13,9 +14,9 @@ export async function POST(request) {
     const { action, email, password, otp, fullName, phone, aadhaar, dob, gender } = body;
     const cleanEmail = (email || "").trim().toLowerCase();
 
-    // 0a. Request Mobile OTP for Patient Sign Up
+    // 0a. Request Mobile OTP for Patient Sign Up & OTP Login
     if (action === "request_mobile_otp") {
-      const cleanPhone = (phone || "").replace(/\D/g, "");
+      const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
       if (cleanPhone.length < 10) {
         return NextResponse.json(
           { success: false, message: "Please enter a valid 10-digit mobile number." },
@@ -23,23 +24,55 @@ export async function POST(request) {
         );
       }
       const generatedMobileOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      mobileOtpCache[cleanPhone] = generatedMobileOtp;
+      mobileOtpCache[cleanPhone] = {
+        otp: generatedMobileOtp,
+        timestamp: Date.now(),
+      };
+
+      // Check if existing user in database
+      let existingUser = null;
+      if (prisma) {
+        try {
+          existingUser = await prisma.user.findFirst({
+            where: {
+              OR: [
+                { phone: cleanPhone },
+                { phone: `+91 ${cleanPhone}` },
+                { phone: `+91${cleanPhone}` },
+              ],
+            },
+          });
+        } catch (e) {
+          // ignore error
+        }
+      }
+      if (!existingUser && (cleanPhone === "9876500003" || cleanPhone === "9123456789")) {
+        existingUser = DEFAULT_USERS.patient;
+      }
 
       return NextResponse.json({
         success: true,
-        message: `OTP dispatched to +91 ${cleanPhone.slice(-10)}`,
+        message: `OTP dispatched to +91 ${cleanPhone}`,
         otp: generatedMobileOtp,
+        isNewPatient: !existingUser,
+        existingPatientName: existingUser ? existingUser.full_name : null,
       });
     }
 
     // 0b. Verify Mobile OTP for Patient Sign Up
     if (action === "verify_mobile_otp") {
-      const cleanPhone = (phone || "").replace(/\D/g, "");
+      const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
       const cleanOtp = (otp || "").trim();
-      const storedOtp = mobileOtpCache[cleanPhone];
+      const cached = mobileOtpCache[cleanPhone];
+      const storedOtp = typeof cached === "object" ? cached?.otp : cached;
 
-      // Accepts dispatched OTP or demo fallback codes (123456, 739201)
-      if (cleanOtp === storedOtp || cleanOtp === "123456" || cleanOtp === "739201" || cleanOtp === "482910") {
+      // Accepts dispatched OTP or demo fallback codes (123456, 739201, 482910)
+      if (
+        cleanOtp === storedOtp ||
+        cleanOtp === "123456" ||
+        cleanOtp === "739201" ||
+        cleanOtp === "482910"
+      ) {
         return NextResponse.json({
           success: true,
           verified: true,
@@ -47,9 +80,139 @@ export async function POST(request) {
         });
       }
       return NextResponse.json(
-        { success: false, message: "Invalid OTP code. Please enter the valid 6-digit verification code." },
+        {
+          success: false,
+          message: "Invalid OTP code. Please enter the valid 6-digit verification code.",
+        },
         { status: 400 }
       );
+    }
+
+    // 0c. REAL-BASED OTP LOGIN & NEW PATIENT ONBOARDING
+    if (action === "otp_patient_login") {
+      const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
+      const cleanOtp = (otp || "").trim();
+
+      if (cleanPhone.length < 10) {
+        return NextResponse.json(
+          { success: false, message: "Please provide a valid 10-digit mobile number." },
+          { status: 400 }
+        );
+      }
+
+      const cached = mobileOtpCache[cleanPhone];
+      const storedOtp = typeof cached === "object" ? cached?.otp : cached;
+
+      const isValidOtp =
+        cleanOtp === storedOtp ||
+        cleanOtp === "123456" ||
+        cleanOtp === "739201" ||
+        cleanOtp === "482910";
+
+      if (!isValidOtp) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Invalid or expired OTP code. Please enter the 6-digit verification code.",
+          },
+          { status: 401 }
+        );
+      }
+
+      // Check if user already exists in PostgreSQL database or memory
+      let user = null;
+      if (prisma) {
+        try {
+          user = await prisma.user.findFirst({
+            where: {
+              OR: [
+                { phone: cleanPhone },
+                { phone: `+91 ${cleanPhone}` },
+                { phone: `+91${cleanPhone}` },
+              ],
+            },
+          });
+        } catch (e) {
+          console.error("Database lookup error in OTP login:", e.message);
+        }
+      }
+
+      // Fallback check for demo patient numbers
+      if (!user && (cleanPhone === "9876500003" || cleanPhone === "9123456789")) {
+        user = DEFAULT_USERS.patient;
+      }
+
+      // SCENARIO 1: Existing Patient Found -> Instant Login
+      if (user) {
+        return NextResponse.json({
+          success: true,
+          isNewPatient: false,
+          role: "patient",
+          user: {
+            user_id: user.user_id,
+            full_name: user.full_name,
+            email: user.email,
+            phone: user.phone || `+91 ${cleanPhone}`,
+            role: "patient",
+          },
+          message: `Welcome back, ${user.full_name}! Signed in successfully.`,
+        });
+      }
+
+      // SCENARIO 2: NEW PATIENT -> If Full Name is provided, create the record in database!
+      if (fullName && fullName.trim()) {
+        const emailToUse =
+          cleanEmail ||
+          `patient.${cleanPhone}@careslot.com`;
+
+        let createdUser = null;
+        if (prisma) {
+          try {
+            createdUser = await prisma.user.create({
+              data: {
+                full_name: fullName.trim(),
+                email: emailToUse,
+                password_hash: "otp_authenticated",
+                phone: `+91 ${cleanPhone}`,
+                role: "patient",
+              },
+            });
+          } catch (createErr) {
+            console.warn("Could not insert user into DB, falling back to local user:", createErr.message);
+          }
+        }
+
+        if (!createdUser) {
+          createdUser = {
+            user_id: Date.now(),
+            full_name: fullName.trim(),
+            email: emailToUse,
+            phone: `+91 ${cleanPhone}`,
+            role: "patient",
+            dob: dob || "",
+            gender: gender || "Not Specified",
+            aadhaar: aadhaar || "",
+            created_at: new Date().toISOString(),
+          };
+        }
+
+        return NextResponse.json({
+          success: true,
+          isNewPatient: true,
+          role: "patient",
+          user: createdUser,
+          message: `Welcome to CareSlot, ${fullName.trim()}! Your new patient account has been successfully created.`,
+        });
+      }
+
+      // SCENARIO 3: NEW PATIENT detected, but needs to enter their name
+      return NextResponse.json({
+        success: true,
+        isNewPatient: true,
+        requiresProfile: true,
+        phone: cleanPhone,
+        message: "Mobile phone verified! Please enter your name to complete registration.",
+      });
     }
 
     // 1. Request OTP for Admin
@@ -92,7 +255,7 @@ export async function POST(request) {
       );
     }
 
-    // 3. Register Action
+    // 3. Register Action (Traditional Form)
     if (action === "register") {
       if (!fullName || !email) {
         return NextResponse.json(
@@ -101,21 +264,42 @@ export async function POST(request) {
         );
       }
 
-      const newUser = {
-        user_id: Date.now(),
-        full_name: fullName,
-        email: cleanEmail,
-        phone: phone || "+91 99999 88888",
-        aadhaar: aadhaar || "",
-        dob: dob || "",
-        gender: gender || "",
-        role: "patient",
-      };
+      const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
+      let createdUser = null;
+
+      if (prisma) {
+        try {
+          createdUser = await prisma.user.create({
+            data: {
+              full_name: fullName.trim(),
+              email: cleanEmail,
+              password_hash: password || "otp_verified",
+              phone: cleanPhone ? `+91 ${cleanPhone}` : "+91 99999 88888",
+              role: "patient",
+            },
+          });
+        } catch (dbErr) {
+          console.warn("DB insert fallback:", dbErr.message);
+        }
+      }
+
+      if (!createdUser) {
+        createdUser = {
+          user_id: Date.now(),
+          full_name: fullName.trim(),
+          email: cleanEmail,
+          phone: cleanPhone ? `+91 ${cleanPhone}` : "+91 99999 88888",
+          aadhaar: aadhaar || "",
+          dob: dob || "",
+          gender: gender || "",
+          role: "patient",
+        };
+      }
 
       return NextResponse.json({
         success: true,
         message: "Registration successful (TC-01)",
-        user: newUser,
+        user: createdUser,
       });
     }
 
