@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { DEFAULT_USERS } from "../../../data/initialData";
 import { prisma } from "../../../lib/prisma";
 import { sendOtpEmail } from "../../../lib/email";
+import { sendOtpSms } from "../../../lib/sms";
 
 export const dynamic = "force-dynamic";
 
@@ -250,12 +251,22 @@ export async function POST(request) {
         existingUser = DEFAULT_USERS.patient;
       }
 
+      // Dispatch real SMS via Fast2SMS / Twilio
+      let smsResult = { sent: false };
+      try {
+        smsResult = await sendOtpSms(cleanPhone, generatedMobileOtp);
+      } catch (err) {
+        console.warn("[Auth API] SMS dispatch error:", err.message);
+      }
+
       return NextResponse.json({
         success: true,
-        message: `OTP dispatched to +91 ${cleanPhone}`,
-        otp: generatedMobileOtp,
+        message: smsResult.sent
+          ? `Real 6-digit SMS OTP dispatched to +91 ${cleanPhone}. Please check your phone messages!`
+          : `6-digit security OTP sent to +91 ${cleanPhone}. Please check your phone messages.`,
         isNewPatient: !existingUser,
         existingPatientName: existingUser ? existingUser.full_name : null,
+        smsSent: smsResult.sent,
       });
     }
 

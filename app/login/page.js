@@ -256,18 +256,16 @@ export default function LoginPage() {
     try {
       const res = await requestMobileOtp(cleanDigits);
       if (res.success) {
-        setGeneratedPatientPhoneOtp(res.otp || "739201");
         setPatientPhoneOtpSent(true);
         setPhoneCountdown(60);
-        setSuccessMsg(`6-digit verification code dispatched to +91 ${cleanDigits.slice(-10)}`);
+        setSuccessMsg(`6-digit SMS verification code sent to +91 ${cleanDigits.slice(-10)}. Please check your messages.`);
       } else {
         setErrorMsg(res.message);
       }
     } catch {
-      setGeneratedPatientPhoneOtp("739201");
       setPatientPhoneOtpSent(true);
       setPhoneCountdown(60);
-      setSuccessMsg(`6-digit verification code dispatched to +91 ${cleanDigits.slice(-10)}`);
+      setSuccessMsg(`6-digit SMS verification code sent to +91 ${cleanDigits.slice(-10)}. Please check your messages.`);
     } finally {
       setIsSendingPatientPhoneOtp(false);
     }
@@ -399,18 +397,16 @@ export default function LoginPage() {
     try {
       const res = await requestMobileOtp(cleanDigits);
       if (res.success) {
-        setGeneratedMobileOtp(res.otp || "739201");
         setMobileOtpSent(true);
         setPhoneCountdownSignup(60);
-        setSuccessMsg(`6-digit verification code dispatched to +91 ${cleanDigits.slice(-10)}`);
+        setSuccessMsg(`6-digit SMS verification code sent to +91 ${cleanDigits.slice(-10)}. Please check your messages.`);
       } else {
         setErrorMsg(res.message);
       }
     } catch {
-      setGeneratedMobileOtp("739201");
       setMobileOtpSent(true);
       setPhoneCountdownSignup(60);
-      setSuccessMsg(`6-digit verification code dispatched to +91 ${cleanDigits.slice(-10)}`);
+      setSuccessMsg(`6-digit SMS verification code sent to +91 ${cleanDigits.slice(-10)}. Please check your messages.`);
     } finally {
       setIsSendingMobileOtp(false);
     }
@@ -986,33 +982,29 @@ export default function LoginPage() {
 
                         {/* Interactive Mobile OTP Challenge Banner */}
                         {patientPhoneOtpSent && (
-                          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 space-y-2.5 animate-in fade-in duration-200">
+                          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 space-y-3 animate-in fade-in duration-200">
                             <div className="flex items-center justify-between text-xs font-bold text-blue-900">
                               <span className="flex items-center gap-1.5">
-                                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                                <span>SMS Gateway OTP Dispatched</span>
+                                <Phone className="w-3.5 h-3.5 text-blue-600" />
+                                <span>SMS Verification Code Dispatched</span>
                               </span>
-                              <span className="text-[10px] bg-blue-200/80 text-blue-800 font-bold px-2 py-0.5 rounded-full">
-                                2FA Verified
+                              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                                SMS Dispatched ✓
                               </span>
                             </div>
 
-                            <div className="flex items-center justify-between bg-white/95 p-2.5 rounded-xl border border-blue-100">
-                              <div>
-                                <span className="text-[10px] text-slate-500 block">
-                                  OTP sent to +91 {patientPhone}:
-                                </span>
-                                <span className="font-mono font-black text-blue-900 text-base tracking-widest">
-                                  {generatedPatientPhoneOtp}
-                                </span>
+                            <div className="bg-white/95 p-3 rounded-xl border border-blue-100 flex items-start gap-2.5">
+                              <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                                <Phone className="w-4 h-4" />
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => setPatientPhoneOtp(generatedPatientPhoneOtp)}
-                                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-2xs transition-colors"
-                              >
-                                Auto-Fill Code
-                              </button>
+                              <div>
+                                <p className="text-xs font-semibold text-slate-800">
+                                  Check your SMS messages on <span className="text-blue-700 font-bold">+91 {patientPhone}</span>
+                                </p>
+                                <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                                  We have dispatched a 6-digit OTP passcode via SMS. Please check your mobile messages and enter the code below.
+                                </p>
+                              </div>
                             </div>
 
                             <div>
@@ -1518,28 +1510,26 @@ export default function LoginPage() {
                       <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 space-y-2.5 animate-in fade-in duration-200">
                         <div className="flex items-center justify-between text-xs font-bold text-blue-900">
                           <span className="flex items-center gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                            <span>SMS Gateway Verification Challenge</span>
+                            <Phone className="w-3.5 h-3.5 text-blue-600" />
+                            <span>Mobile Phone SMS Verification</span>
                           </span>
-                          <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">
-                            Security 2FA
+                          <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                            SMS Dispatched ✓
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between bg-white/95 p-2.5 rounded-xl border border-blue-100">
-                          <div>
-                            <span className="text-[10px] text-slate-500 block">OTP Sent to +91 {phone}:</span>
-                            <span className="font-mono font-black text-blue-900 text-base tracking-widest">
-                              {generatedMobileOtp}
-                            </span>
+                        <div className="bg-white/95 p-3 rounded-xl border border-blue-100 flex items-start gap-2.5">
+                          <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <Phone className="w-4 h-4" />
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => setMobileOtp(generatedMobileOtp)}
-                            className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold shadow-2xs transition-colors"
-                          >
-                            Auto-Fill Code
-                          </button>
+                          <div>
+                            <p className="text-xs font-semibold text-slate-800">
+                              OTP sent to <span className="text-blue-700 font-bold">+91 {phone}</span>
+                            </p>
+                            <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                              Please check your SMS inbox and enter the 6-digit OTP code below to verify your phone number.
+                            </p>
+                          </div>
                         </div>
 
                         <div className="flex items-center gap-2 pt-0.5">
