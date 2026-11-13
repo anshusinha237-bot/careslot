@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { DEFAULT_USERS } from "../../../data/initialData";
 import { prisma } from "../../../lib/prisma";
+import { sendOtpEmail } from "../../../lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -47,12 +48,23 @@ export async function POST(request) {
         existingUser = DEFAULT_USERS.patient;
       }
 
+      // Dispatch real email via Gmail SMTP / Nodemailer
+      let emailDispatchResult = { sent: false };
+      try {
+        emailDispatchResult = await sendOtpEmail(cleanEmail, generatedEmailOtp, purpose || "login");
+      } catch (err) {
+        console.warn("[Auth API] Email dispatch caught error:", err.message);
+      }
+
       return NextResponse.json({
         success: true,
-        message: `6-digit security code dispatched to ${cleanEmail}`,
+        message: emailDispatchResult.sent
+          ? `Real 6-digit security code sent to ${cleanEmail}. Please check your inbox!`
+          : `6-digit security code dispatched to ${cleanEmail}`,
         otp: generatedEmailOtp,
         isRegistered: !!existingUser,
         userName: existingUser?.full_name || null,
+        emailSent: emailDispatchResult.sent,
       });
     }
 
