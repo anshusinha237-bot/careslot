@@ -49,7 +49,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState("login"); // 'login' | 'register'
   const [selectedRole, setSelectedRole] = useState("patient"); // 'patient' | 'doctor' | 'admin'
 
-  // Patient Login Method Tab: 'email_otp' | 'mobile_otp' | 'password'
+  // Patient Login Method Tab: 'email_otp' | 'mobile_otp' (Password completely removed for patients)
   const [patientLoginMethod, setPatientLoginMethod] = useState("email_otp");
 
   // Email OTP Login States (for Patient Login)
@@ -72,9 +72,9 @@ export default function LoginPage() {
   const [isNewPatientPhoneFlow, setIsNewPatientPhoneFlow] = useState(false);
   const [newPatientPhoneName, setNewPatientPhoneName] = useState("");
 
-  // Credentials (Password-based login)
-  const [email, setEmail] = useState("patient@careslot.com");
-  const [password, setPassword] = useState("Patient@123");
+  // Doctor Credentials (Only Doctor uses password)
+  const [email, setEmail] = useState("doctor@careslot.com");
+  const [password, setPassword] = useState("Doctor@123");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
@@ -84,11 +84,10 @@ export default function LoginPage() {
   const [otpSent, setOtpSent] = useState(false);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
 
-  // Patient Registration States
+  // Patient Registration States (100% Passwordless)
   const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("1996-05-14");
   const [gender, setGender] = useState("Male");
-  const [signupPassword, setSignupPassword] = useState("");
 
   // Signup Email Verification States
   const [signupEmail, setSignupEmail] = useState("");
@@ -111,7 +110,7 @@ export default function LoginPage() {
   // Aadhaar
   const [aadhaar, setAadhaar] = useState("");
 
-  // Forgot Password Modal
+  // Forgot Password Modal (Only for Doctor)
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotSuccess, setForgotSuccess] = useState(false);
@@ -176,8 +175,7 @@ export default function LoginPage() {
       setEmail("doctor@careslot.com");
       setPassword("Doctor@123");
     } else {
-      setEmail("patient@careslot.com");
-      setPassword("Patient@123");
+      setPatientLoginMethod("email_otp");
       setPatientEmail("patient@careslot.com");
       setPatientPhone("9876500003");
     }
@@ -490,7 +488,7 @@ export default function LoginPage() {
       return;
     }
 
-    // Patient Role Flow
+    // Patient Role Flow (100% Passwordless)
     if (selectedRole === "patient") {
       if (patientLoginMethod === "email_otp") {
         return handleVerifyPatientEmailOtp(e);
@@ -498,12 +496,12 @@ export default function LoginPage() {
       if (patientLoginMethod === "mobile_otp") {
         return handleVerifyPatientPhoneOtp(e);
       }
-      // Password mode for patient
+      return;
     }
 
-    // Patient (Password) & Doctor Flow
+    // Doctor Flow (Clinical Email & Password)
     if (!email.trim() || !password) {
-      setErrorMsg("Please provide your email address and password.");
+      setErrorMsg("Please provide your doctor clinical email address and password.");
       return;
     }
 
@@ -511,11 +509,8 @@ export default function LoginPage() {
     try {
       const res = await login(email, password, false);
       if (res.success) {
-        setSuccessMsg(`Signed in successfully as ${res.role.toUpperCase()}. Redirecting...`);
-        setTimeout(() => {
-          if (res.role === "doctor") router.push("/doctor");
-          else router.push("/patient");
-        }, 600);
+        setSuccessMsg(`Signed in successfully as Doctor. Redirecting to clinical console...`);
+        setTimeout(() => router.push("/doctor"), 600);
       } else {
         setErrorMsg(res.message || "Invalid email or password. Please check your credentials.");
       }
@@ -526,7 +521,7 @@ export default function LoginPage() {
     }
   };
 
-  // Handle Patient Registration Submit
+  // Handle Patient Registration Submit (100% Passwordless)
   const handleRegister = async (e) => {
     e.preventDefault();
     setErrorMsg("");
@@ -544,10 +539,6 @@ export default function LoginPage() {
       setErrorMsg("Email address verification is mandatory. Please dispatch and verify your 6-digit email code.");
       return;
     }
-    if (!signupPassword || signupPassword.length < 6) {
-      setErrorMsg("Password must be at least 6 characters in length.");
-      return;
-    }
     if (!isMobileVerified) {
       setErrorMsg("Mobile number verification is mandatory. Please send and verify your mobile OTP.");
       return;
@@ -559,14 +550,14 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
     try {
-      const res = await register(fullName, signupEmail, phone, signupPassword, {
+      const res = await register(fullName, signupEmail, phone, "passwordless_patient", {
         dob,
         gender,
         aadhaar: cleanAadhaar,
       });
 
       if (res.success) {
-        setSuccessMsg("Patient profile created and email verified! Accessing patient portal...");
+        setSuccessMsg("Patient profile created with verified email & mobile OTP! Accessing patient portal...");
         setTimeout(() => router.push("/patient"), 700);
       } else {
         setErrorMsg(res.message || "Registration failed. Please review your details.");
@@ -578,7 +569,7 @@ export default function LoginPage() {
     }
   };
 
-  // Handle Forgot Password
+  // Handle Forgot Password (Only for Doctor)
   const handleForgotPasswordSubmit = (e) => {
     e.preventDefault();
     if (!forgotEmail.trim()) return;
@@ -647,9 +638,9 @@ export default function LoginPage() {
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-white">Verified 2FA &amp; National Health ID</h4>
+                    <h4 className="text-xs font-bold text-white">Passwordless Patient Security &amp; ABHA ID</h4>
                     <p className="text-[11px] text-slate-300 mt-0.5">
-                      Email verification, SMS OTP, and ABHA ID linkage with UIDAI Aadhaar hashing.
+                      Fast email code &amp; mobile OTP verification with national health ID linkage.
                     </p>
                   </div>
                 </div>
@@ -698,8 +689,10 @@ export default function LoginPage() {
                   </h2>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {mode === "login"
-                      ? "Select your hospital credential role to access the console"
-                      : "Create your patient account with verified email & mobile ID"}
+                      ? selectedRole === "patient"
+                        ? "Passwordless patient portal access via Email Code or Mobile OTP"
+                        : "Select your hospital credential role to access the console"
+                      : "Create your patient account with verified email & mobile ID (No password needed)"}
                   </p>
                 </div>
 
@@ -779,7 +772,7 @@ export default function LoginPage() {
                     </button>
                   </div>
 
-                  {/* PATIENT SUB-TABS: Email OTP (Default & Highlighted) vs Mobile OTP vs Password */}
+                  {/* PATIENT SUB-TABS: Strictly Passwordless (Email Code vs Mobile OTP) */}
                   {selectedRole === "patient" && (
                     <div className="mb-5 p-2 bg-gradient-to-r from-blue-50/70 via-indigo-50/70 to-slate-100 rounded-2xl border border-blue-100">
                       <div className="flex items-center justify-between px-1 mb-1.5">
@@ -788,10 +781,10 @@ export default function LoginPage() {
                           <span>Patient Sign In Method</span>
                         </span>
                         <span className="text-[10px] font-extrabold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full border border-blue-200">
-                          Passwordless 2FA
+                          100% Passwordless
                         </span>
                       </div>
-                      <div className="grid grid-cols-3 gap-1.5">
+                      <div className="grid grid-cols-2 gap-2">
                         <button
                           type="button"
                           onClick={() => {
@@ -799,14 +792,14 @@ export default function LoginPage() {
                             setErrorMsg("");
                             setSuccessMsg("");
                           }}
-                          className={`py-2 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                          className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                             patientLoginMethod === "email_otp"
                               ? "bg-blue-600 text-white shadow-sm shadow-blue-500/25"
                               : "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80"
                           }`}
                         >
                           <Mail className="w-3.5 h-3.5" />
-                          <span>Email Code</span>
+                          <span>Email Verification Code</span>
                         </button>
 
                         <button
@@ -816,31 +809,14 @@ export default function LoginPage() {
                             setErrorMsg("");
                             setSuccessMsg("");
                           }}
-                          className={`py-2 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                          className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                             patientLoginMethod === "mobile_otp"
                               ? "bg-blue-600 text-white shadow-sm shadow-blue-500/25"
                               : "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80"
                           }`}
                         >
                           <Phone className="w-3.5 h-3.5" />
-                          <span>Mobile OTP</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPatientLoginMethod("password");
-                            setErrorMsg("");
-                            setSuccessMsg("");
-                          }}
-                          className={`py-2 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                            patientLoginMethod === "password"
-                              ? "bg-blue-600 text-white shadow-sm shadow-blue-500/25"
-                              : "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/80"
-                          }`}
-                        >
-                          <Lock className="w-3.5 h-3.5" />
-                          <span>Password</span>
+                          <span>Mobile Phone OTP</span>
                         </button>
                       </div>
                     </div>
@@ -848,7 +824,7 @@ export default function LoginPage() {
 
                   {/* Form */}
                   <form onSubmit={handleLogin} className="space-y-4">
-                    {/* CASE 1: PATIENT WITH EMAIL OTP (PASSWORDLESS 2FA) */}
+                    {/* CASE 1: PATIENT WITH EMAIL OTP (PASSWORDLESS) */}
                     {selectedRole === "patient" && patientLoginMethod === "email_otp" && (
                       <div className="space-y-3.5">
                         <div>
@@ -968,7 +944,7 @@ export default function LoginPage() {
                       </div>
                     )}
 
-                    {/* CASE 2: PATIENT WITH MOBILE OTP */}
+                    {/* CASE 2: PATIENT WITH MOBILE OTP (PASSWORDLESS) */}
                     {selectedRole === "patient" && patientLoginMethod === "mobile_otp" && (
                       <div className="space-y-3.5">
                         <div>
@@ -1162,13 +1138,12 @@ export default function LoginPage() {
                       </div>
                     )}
 
-                    {/* CASE 4: DOCTOR OR PATIENT (PASSWORD MODE) */}
-                    {((selectedRole === "patient" && patientLoginMethod === "password") ||
-                      selectedRole === "doctor") && (
+                    {/* CASE 4: DOCTOR (CLINICAL PASSWORD MODE ONLY) */}
+                    {selectedRole === "doctor" && (
                       <div className="space-y-3.5">
                         <div>
                           <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">
-                            {selectedRole === "doctor" ? "Doctor Clinical Email" : "Patient Email Address"}
+                            Doctor Clinical Email
                           </label>
                           <div className="relative">
                             <Mail className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
@@ -1202,7 +1177,7 @@ export default function LoginPage() {
                               type={showPassword ? "text" : "password"}
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
-                              placeholder="Enter your password"
+                              placeholder="Enter your confidential password"
                               className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                               required
                             />
@@ -1253,11 +1228,9 @@ export default function LoginPage() {
                             ? isNewPatientEmailFlow
                               ? "Complete Registration & Access Portal"
                               : "Verify Email Code & Enter Portal"
-                            : selectedRole === "patient" && patientLoginMethod === "mobile_otp"
-                            ? isNewPatientPhoneFlow
-                              ? "Complete Registration & Access Portal"
-                              : "Verify OTP & Enter Portal"
-                            : "Log In to Patient Portal"}
+                            : isNewPatientPhoneFlow
+                            ? "Complete Registration & Access Portal"
+                            : "Verify OTP & Enter Portal"}
                         </span>
                       </button>
                     </div>
@@ -1266,6 +1239,7 @@ export default function LoginPage() {
               ) : (
                 /* ===================================================================
                     REGISTRATION VIEW: PATIENT DETAILS, EMAIL VERIFICATION, MOBILE OTP & AADHAAR
+                    (100% PASSWORDLESS - ZERO PASSWORDS REQUIRED)
                 =================================================================== */
                 <form onSubmit={handleRegister} className="space-y-4">
                   {/* 1. Demographics */}
@@ -1331,26 +1305,9 @@ export default function LoginPage() {
                         </div>
                       </div>
                     </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Create Confidential Password *:
-                      </label>
-                      <div className="relative">
-                        <Lock className="w-4 h-4 absolute left-3.5 top-2.5 text-slate-400" />
-                        <input
-                          type="password"
-                          placeholder="Min 6 characters (e.g. Ramesh@123)"
-                          value={signupPassword}
-                          onChange={(e) => setSignupPassword(e.target.value)}
-                          className="w-full pl-10 pr-3 py-2 rounded-xl border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          required
-                        />
-                      </div>
-                    </div>
                   </div>
 
-                  {/* 2. EMAIL ADDRESS & LIVE EMAIL VERIFICATION (MANDATORY) */}
+                  {/* 2. EMAIL ADDRESS & LIVE EMAIL VERIFICATION (MANDATORY & PASSWORDLESS) */}
                   <div className="pt-2 space-y-3">
                     <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                       <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 uppercase tracking-wider">
@@ -1791,7 +1748,7 @@ export default function LoginPage() {
                 }}
                 className="p-2 rounded-xl bg-slate-800 hover:bg-blue-600 text-left font-bold transition-colors"
               >
-                <div>Doctor</div>
+                <div>Doctor (Password)</div>
                 <div className="text-[10px] text-slate-400 font-mono">Doctor@123</div>
               </button>
               <button
@@ -1812,7 +1769,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Forgot Password Modal */}
+        {/* Forgot Password Modal (Only for Doctor) */}
         {showForgotModal && (
           <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200">
@@ -1821,7 +1778,7 @@ export default function LoginPage() {
                   <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                     <KeyRound className="w-4 h-4" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-900">Reset Hospital Password</h3>
+                  <h3 className="text-base font-bold text-slate-900">Reset Doctor Clinical Password</h3>
                 </div>
                 <button
                   onClick={() => {
@@ -1837,17 +1794,17 @@ export default function LoginPage() {
               {!forgotSuccess ? (
                 <form onSubmit={handleForgotPasswordSubmit} className="mt-4 space-y-4">
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    Enter the registered email address associated with your patient or clinical account. We will send an encrypted password reset link.
+                    Enter your registered doctor email address. We will send an encrypted password reset link to your clinical mail.
                   </p>
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                      Email Address:
+                      Doctor Clinical Email:
                     </label>
                     <input
                       type="email"
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
-                      placeholder="e.g. name@careslot.com"
+                      placeholder="e.g. doctor@careslot.com"
                       className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       required
                     />
@@ -1875,7 +1832,7 @@ export default function LoginPage() {
                   </div>
                   <h4 className="text-sm font-bold text-slate-900">Recovery Instructions Dispatched</h4>
                   <p className="text-xs text-slate-600 leading-relaxed max-w-xs mx-auto">
-                    If an active record exists for <strong>{forgotEmail}</strong>, password reset steps have been dispatched. Check your inbox and spam folder.
+                    If an active doctor record exists for <strong>{forgotEmail}</strong>, password reset steps have been dispatched. Check your inbox and spam folder.
                   </p>
                   <button
                     type="button"
