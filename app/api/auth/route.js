@@ -60,8 +60,7 @@ export async function POST(request) {
         success: true,
         message: emailDispatchResult.sent
           ? `Real 6-digit security code sent to ${cleanEmail}. Please check your inbox!`
-          : `6-digit security code dispatched to ${cleanEmail}`,
-        otp: generatedEmailOtp,
+          : `6-digit security code dispatched to ${cleanEmail}. Please check your inbox.`,
         isRegistered: !!existingUser,
         userName: existingUser?.full_name || null,
         emailSent: emailDispatchResult.sent,
